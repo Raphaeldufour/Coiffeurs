@@ -31,26 +31,25 @@ function renderEnseignes(startIndex, endIndex) {
 function loadMoreEnseignes() {
     if (!isLoading) {
         isLoading = true;
-        getEnseignes()
-            .then(newEnseignes => {
-                enseignes = enseignes.concat(newEnseignes);
-                renderEnseignes(indexPage - 10, indexPage);
-                nombreCoiffeurs.textContent = enseignes.length;
-                indexPage += 10;
-                isLoading = false;
-            });
+        renderEnseignes(indexPage - 10, indexPage);
+        indexPage += 10;
+        isLoading = false;
     }
 }
-
-getEnseignes()
-    .then(initialEnseignes => {
-        enseignes = initialEnseignes;
-        renderEnseignes(0, indexPage);
-        nombreCoiffeurs.textContent = enseignes.length;
-        indexPage += 10;
-    });
-window.addEventListener('scroll', () => {
+function checkScroll(){
     if ((window.scrollY + window.innerHeight) >= document.body.offsetHeight) {
         loadMoreEnseignes();
     }
-});
+}
+
+function init() {
+    getEnseignes()
+        .then(initialEnsignes => {
+            enseignes = initialEnsignes;
+            renderEnseignes(0, indexPage);
+            nombreCoiffeurs.textContent = enseignes.length.toString();
+            indexPage += 10;
+        });
+    window.addEventListener('scroll', checkScroll);
+}
+init();
