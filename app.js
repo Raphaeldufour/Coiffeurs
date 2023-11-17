@@ -4,7 +4,7 @@ import sqlite3 from 'sqlite3';
 const app = express();
 app.use(express.static('public'));
 
-const db = new sqlite3.Database('database.db');
+const db = new sqlite3.Database('database/database.db');
 
 app.get('/api/enseignes', (req, res) => {
     db.all('SELECT * FROM enseignes', (err, enseignes) => {
