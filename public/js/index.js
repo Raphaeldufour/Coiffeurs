@@ -5,7 +5,7 @@ const inputRecherche = document.getElementById('input-recherche');
 let indexPage = 10;
 let enseignes = [];
 let affichageEnseignes = [];
-let isLoading = false;
+
 
 function getEnseignes() {
     return fetch('/api/enseignes')
@@ -31,12 +31,8 @@ function renderEnseignes(enseignes, startIndex, endIndex) {
 }
 
 function loadMoreEnseignes(enseignes) {
-    if (!isLoading) {
-        isLoading = true;
         renderEnseignes(enseignes, indexPage - 10, indexPage);
         indexPage += 10;
-        isLoading = false;
-    }
 }
 
 function checkScroll() {
