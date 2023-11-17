@@ -50,13 +50,8 @@ function filterEnseignes() {
     affichageEnseignes = enseignes.filter(enseigne => {
         const nomLowerCase = enseigne.nom ? enseigne.nom.toLowerCase() : '';
         const villeLowerCase = enseigne.ville ? enseigne.ville.toLowerCase() : '';
-        const voieLowerCase = enseigne.voie ? enseigne.voie.toLowerCase() : '';
-        const codePostalLowerCase = enseigne.codepostal ? enseigne.codepostal.toString().toLowerCase() : '';
-
         return nomLowerCase.includes(searchValue.toLowerCase())
             || villeLowerCase.includes(searchValue.toLowerCase())
-            || voieLowerCase.includes(searchValue.toLowerCase())
-            || codePostalLowerCase.includes(searchValue.toLowerCase());
     });
     nombreCoiffeurs.textContent = affichageEnseignes.length.toString();
     containerEnseigne.innerHTML = '';
