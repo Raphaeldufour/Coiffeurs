@@ -2,6 +2,11 @@ const templateEnseigne = document.getElementById('template-enseigne');
 const containerEnseigne = document.getElementById('container-enseigne');
 const nombreCoiffeurs = document.getElementById('nombre-coiffeur');
 const inputRecherche = document.getElementById('input-recherche');
+
+const logImgContainer = document.getElementById('logImgContainer');
+
+
+
 let indexPage = 10;
 let enseignes = [];
 let affichageEnseignes = [];
@@ -56,7 +61,69 @@ function filterEnseignes() {
 }
 
 
+
+function checkLogin()
+{
+    let isLogged = sessionStorage.getItem('isLoggedIn');
+    console.log(isLogged);
+
+    if (isLogged === 'true')
+    {
+        let addPersonButton = document.createElement('span');
+        let imgAdd = document.createElement('img');
+        imgAdd.src = 'img/addperson.svg';
+        imgAdd.alt = 'add';
+        imgAdd.id = 'add-icon';
+
+        addPersonButton.appendChild(imgAdd);
+        logImgContainer.appendChild(addPersonButton);
+
+
+
+
+
+
+        let logoutButton = document.createElement('span');
+
+        logoutButton.addEventListener('click', () =>
+            {
+                sessionStorage.setItem('isLoggedIn', 'false');
+                window.location.reload();
+            }
+        );
+
+        let imgLogout = document.createElement('img');
+        imgLogout.src = 'img/logout.svg';
+        imgLogout.alt = 'logout';
+        imgLogout.id = 'logout-icon';
+
+        logoutButton.appendChild(imgLogout);
+
+        logImgContainer.appendChild(logoutButton);
+    }else
+    {
+        let loginButton = document.createElement('a');
+        loginButton.href = '/login.html';
+
+        let imgLoggin = document.createElement('img');
+        imgLoggin.src = 'img/login.svg';
+        imgLoggin.alt = 'login';
+        imgLoggin.id = 'login-icon';
+
+        loginButton.appendChild(imgLoggin);
+
+        logImgContainer.appendChild(loginButton);
+    }
+}
+
+
+
+
 function init() {
+
+    checkLogin();
+
+
     getEnseignes()
         .then(initialEnsignes => {
             enseignes = initialEnsignes;
