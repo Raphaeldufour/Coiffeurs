@@ -12,8 +12,11 @@
     <a href=""><img src="img/login.svg" alt="login" id="login-icon"></a>
 </nav>
 <div id="main">
+    <div id="search-container">
+        <input type="text" id="search-bar" placeholder="Rechercher...">
+        <p class="nombre-coiffeur"><span id="nombre-coiffeur"></span> coiffeurs trouvés</p>
+    </div>
     <div id="container-enseigne">
-
     </div>
 </div>
 <template id="template-enseigne">
@@ -22,6 +25,9 @@
             <p class="enseigne-coiffeur-nom"></p>
             <p class="enseigne-coiffeur-rue"></p>
             <p class="enseigne-coiffeur-ville"></p>
+        </div>
+        <div class="index-enseigne">
+            <p class="enseigne-coiffeur-index"></p>
         </div>
     </div>
 </template>

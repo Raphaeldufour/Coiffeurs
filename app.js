@@ -7,7 +7,7 @@ app.use(express.static('public'));
 const db = new sqlite3.Database('database/database.db');
 
 app.get('/api/enseignes', (req, res) => {
-    db.all('SELECT * FROM enseignes', (err, enseignes) => {
+    db.all('SELECT * FROM enseignes ORDER BY nom', (err, enseignes) => {
         if (err) {
             res.status(500).send(err.message);
         } else {

@@ -19,9 +19,45 @@ nav{
     height: 20px;
     margin: 0 10px;
 }
+#main{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin: 20px;
+}
+#search-container{
+    width: 100%;
+    margin-top: 20px
+}
+#search-bar{
+    width: 100%;
+    height: 30px;
+    border:0;
+    padding: 0 10px;
+    box-sizing: border-box;
+    background-color: #f3f3f3;
+}
+.nombre-coiffeur{
+    color: #b7b7b7;
+    font-size: 14px;
+    font-style: italic;
+    margin-top:1px;
+}
 .enseigne-coiffeur{
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 22px;
+    font-size: 14px;
+    border-radius: 5px;
+}
+.enseigne-coiffeur:hover {
+    background-color: #bb48bd;
+}
+.enseigne-coiffeur:hover .enseigne-coiffeur-info {
+    color: white;
+}
+.enseigne-coiffeur-index{
+    font-size: 50px;
+    color: #ebebeb;
 }
