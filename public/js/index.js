@@ -4,11 +4,12 @@ const nombreCoiffeurs = document.getElementById('nombre-coiffeur');
 const inputRecherche = document.getElementById('input-recherche');
 let indexPage = 10;
 let enseignes = [];
+let affichageEnseignes = [];
 let isLoading = false;
 
 function getEnseignes() {
     return fetch('/api/enseignes')
-        .then(response => response.json());
+        .then(response => response.json())
 }
 
 function renderEnseigne(enseigne, index) {
@@ -40,19 +41,41 @@ function loadMoreEnseignes(enseignes) {
 
 function checkScroll() {
     if ((window.scrollY + window.innerHeight) >= document.body.offsetHeight) {
-        loadMoreEnseignes(enseignes);
+        loadMoreEnseignes(affichageEnseignes);
     }
 }
+
+function filterEnseignes() {
+    const searchValue = inputRecherche.value;
+    affichageEnseignes = enseignes.filter(enseigne => {
+        const nomLowerCase = enseigne.nom ? enseigne.nom.toLowerCase() : '';
+        const villeLowerCase = enseigne.ville ? enseigne.ville.toLowerCase() : '';
+        const voieLowerCase = enseigne.voie ? enseigne.voie.toLowerCase() : '';
+        const codePostalLowerCase = enseigne.codepostal ? enseigne.codepostal.toString().toLowerCase() : '';
+
+        return nomLowerCase.includes(searchValue.toLowerCase())
+            || villeLowerCase.includes(searchValue.toLowerCase())
+            || voieLowerCase.includes(searchValue.toLowerCase())
+            || codePostalLowerCase.includes(searchValue.toLowerCase());
+    });
+    nombreCoiffeurs.textContent = affichageEnseignes.length.toString();
+    containerEnseigne.innerHTML = '';
+    indexPage = 10;
+    loadMoreEnseignes(affichageEnseignes);
+}
+
 
 function init() {
     getEnseignes()
         .then(initialEnsignes => {
             enseignes = initialEnsignes;
-            renderEnseignes(enseignes, 0, indexPage);
+            affichageEnseignes = enseignes;
+            renderEnseignes(affichageEnseignes, 0, indexPage);
             indexPage += 10;
             nombreCoiffeurs.textContent = enseignes.length.toString();
         });
     window.addEventListener('scroll', checkScroll);
+    inputRecherche.addEventListener('input', filterEnseignes);
 }
 
 init();
