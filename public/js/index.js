@@ -1,6 +1,7 @@
 const templateEnseigne = document.getElementById('template-enseigne');
 const containerEnseigne = document.getElementById('container-enseigne');
 const nombreCoiffeurs = document.getElementById('nombre-coiffeur');
+const inputRecherche = document.getElementById('input-recherche');
 let indexPage = 10;
 let enseignes = [];
 let isLoading = false;
@@ -20,7 +21,7 @@ function renderEnseigne(enseigne, index) {
     containerEnseigne.appendChild(clone);
 }
 
-function renderEnseignes(startIndex, endIndex) {
+function renderEnseignes(enseignes, startIndex, endIndex) {
     for (let i = startIndex; i < endIndex; i++) {
         if (i < enseignes.length) {
             renderEnseigne(enseignes[i], i + 1);
@@ -28,17 +29,18 @@ function renderEnseignes(startIndex, endIndex) {
     }
 }
 
-function loadMoreEnseignes() {
+function loadMoreEnseignes(enseignes) {
     if (!isLoading) {
         isLoading = true;
-        renderEnseignes(indexPage - 10, indexPage);
+        renderEnseignes(enseignes, indexPage - 10, indexPage);
         indexPage += 10;
         isLoading = false;
     }
 }
-function checkScroll(){
+
+function checkScroll() {
     if ((window.scrollY + window.innerHeight) >= document.body.offsetHeight) {
-        loadMoreEnseignes();
+        loadMoreEnseignes(enseignes);
     }
 }
 
@@ -46,10 +48,11 @@ function init() {
     getEnseignes()
         .then(initialEnsignes => {
             enseignes = initialEnsignes;
-            renderEnseignes(0, indexPage);
-            nombreCoiffeurs.textContent = enseignes.length.toString();
+            renderEnseignes(enseignes, 0, indexPage);
             indexPage += 10;
+            nombreCoiffeurs.textContent = enseignes.length.toString();
         });
     window.addEventListener('scroll', checkScroll);
 }
+
 init();
