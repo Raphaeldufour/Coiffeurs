@@ -42,7 +42,7 @@ body {
     flex-direction: row;
     justify-content: space-between;
 }
-#login-submit, #login-cancel{
+#login-submit,#cancel-button{
     width: 150px;
     height: 40px;
     border: none;
