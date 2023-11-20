@@ -8,9 +8,10 @@ let passwordToEnter = "";
 
 
 
-cancelButton.addEventListener("click", () => {
+cancelButton.addEventListener("click", (click) => {
     sessionStorage.setItem('isLoggedIn', 'false');
-    event.preventDefault();
+    click.preventDefault();
+
     window.location.href = "http://localhost:3000";
 });
 
@@ -27,13 +28,11 @@ getUserNameAndPassword().then((data) => {
     loginToEnter = data.login.email;
     passwordToEnter = data.login.mdp;
 
-
-
     loginButton.addEventListener("click", checkLoginAndPassword);
 });
 
-function checkLoginAndPassword() {
-    event.preventDefault();
+function checkLoginAndPassword(click) {
+    click.preventDefault(); //Comme c'est un submit c'est pour empêcher le comportement par défaut (qui est de recharger la page)
 
     if (loginToEnter === emailContainer.value && passwordToEnter === passwordContainer.value) {
         sessionStorage.setItem('isLoggedIn', 'true');
