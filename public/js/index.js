@@ -5,11 +5,76 @@ const inputRecherche = document.getElementById('input-recherche');
 
 const logImgContainer = document.getElementById('logImgContainer');
 
+const mainContainer = document.getElementById('main');
+
+const leftContentContainer = document.getElementById('leftContentContainer');
+
 
 
 let indexPage = 10;
 let enseignes = [];
 let affichageEnseignes = [];
+
+
+
+function createADataSheet(name,ANumber,AWayname,ACity,APostalCode,ALat,ALng)
+{
+    if(sessionStorage.getItem('isLoggedIn') !== 'true') {
+        let dataSheetContainer = document.getElementById('rightContentContainer');
+        dataSheetContainer.classList.add('rightContentContainer');
+        dataSheetContainer.innerText = '';
+
+
+        let table = document.createElement('table');
+        table.classList.add('dataSheetTable');
+        let rows = [
+            {label: 'Nom', value: name},
+            {label: 'Numéro', value: ANumber},
+            {label: 'Voie', value: AWayname},
+            {label: 'Code postal', value: APostalCode},
+            {label: 'Ville', value: ACity}
+        ];
+
+        rows.forEach(rowData => {
+            let row = document.createElement('tr');
+
+            let labelCell = document.createElement('td');
+            labelCell.classList.add('labelCell');
+            labelCell.textContent = rowData.label;
+
+            let valueCell = document.createElement('td');
+            valueCell.classList.add('valueCell');
+            valueCell.textContent = rowData.value;
+
+            row.appendChild(labelCell);
+            row.appendChild(valueCell);
+
+            table.appendChild(row);
+        });
+
+
+
+        dataSheetContainer.appendChild(table);
+
+        let mapContainer = document.createElement('div');
+        mapContainer.id = 'mapContainer';
+
+        dataSheetContainer.appendChild(mapContainer);
+
+        mapboxgl.accessToken= 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
+        const map = new mapboxgl.Map({
+            container: 'mapContainer', // container ID
+            style: 'mapbox://styles/mapbox/streets-v12', // style URL
+            center: [ALat,ALng],
+            zoom: 9
+        });
+
+
+
+    }
+
+}
+
 
 
 function getEnseignes() {
@@ -19,11 +84,22 @@ function getEnseignes() {
 
 function renderEnseigne(enseigne, index) {
     const clone = templateEnseigne.content.cloneNode(true);
+
+
+
+    clone.querySelector('.enseigne-coiffeur').addEventListener('click', ()=>
+        {
+createADataSheet(enseigne.nom,enseigne.num ??'',enseigne.voie,enseigne.ville,enseigne.codepostal,enseigne.lat,enseigne.lng);
+    }
+    )
+
     clone.querySelector('.enseigne-coiffeur-nom').textContent = enseigne.nom;
     const numero = enseigne.num ?? '';  //vérifie si num existe, sinon met une chaine vide
     clone.querySelector('.enseigne-coiffeur-rue').textContent = numero + ' ' + enseigne.voie;
     clone.querySelector('.enseigne-coiffeur-ville').textContent = enseigne.codepostal + ' ' + enseigne.ville;
     clone.querySelector('.enseigne-coiffeur-index').textContent = index;
+
+
     containerEnseigne.appendChild(clone);
 }
 
@@ -41,9 +117,22 @@ function loadMoreEnseignes(enseignes) {
 }
 
 function checkScroll() {
+
+    /*
     if ((window.scrollY + window.innerHeight) >= document.body.offsetHeight) {
         loadMoreEnseignes(affichageEnseignes);
     }
+    */
+
+    const container = document.getElementById('container-enseigne');
+    const scrollableHeight = container.scrollHeight - container.clientHeight;
+    const scrollTop = container.scrollTop;
+
+    // La marge est à 20 pixels pour déclencher le chargement lorsque la barre est proche du bas
+    if (scrollableHeight - scrollTop <= 20) {
+        loadMoreEnseignes(affichageEnseignes);
+    }
+
 }
 
 function filterEnseignes() {
@@ -122,6 +211,7 @@ function checkLogin()
 function init() {
 
     checkLogin();
+    containerEnseigne.scrollTop = 0;
 
 
     getEnseignes()
@@ -132,7 +222,7 @@ function init() {
             indexPage += 10;
             nombreCoiffeurs.textContent = enseignes.length.toString();
         });
-    window.addEventListener('scroll', checkScroll);
+    containerEnseigne.addEventListener('scroll', checkScroll);
     inputRecherche.addEventListener('input', filterEnseignes);
 }
 

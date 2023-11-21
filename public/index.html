@@ -4,22 +4,41 @@
     <meta charset="UTF-8">
     <title>Coiffeurs & Co</title>
     <link href="css/style.css" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
     <script src="js/index.js" defer></script>
+
+
 </head>
 <body>
-<nav id ="topBannier">
+<nav id="topBannier">
     <p id="nav-title">Coiff'EUR</p>
 
-    <span id ="logImgContainer"></span>
+    <span id="logImgContainer"></span>
 
 </nav>
 <div id="main">
-    <div id="search-container">
-        <input type="text" id="input-recherche" placeholder="Rechercher...">
-        <p class="nombre-coiffeur"><span id="nombre-coiffeur"></span> coiffeurs trouvés</p>
+
+    <div id="leftContentContainer">
+
+        <div id="search-container">
+            <input type="text" id="input-recherche" placeholder="Rechercher...">
+            <p class="nombre-coiffeur"><span id="nombre-coiffeur"></span> coiffeurs trouvés</p>
+        </div>
+
+
+        <div id="container-enseigne">
+
+        </div>
+
     </div>
-    <div id="container-enseigne">
+
+    <div id="rightContentContainer">
+
+
     </div>
+
 </div>
 <template id="template-enseigne">
     <div class="enseigne-coiffeur">

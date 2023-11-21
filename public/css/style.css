@@ -1,3 +1,7 @@
+html{
+    overflow-y: hidden;
+}
+
 body{
     margin: 0;
     font-family: 'Roboto', sans-serif;
@@ -19,11 +23,18 @@ nav{
     height: 20px;
     margin: 0 10px;
 }
+
 #main{
+    display: flex;
+    flex-direction: row;
+}
+
+#leftContentContainer{
     display: flex;
     justify-content: center;
     flex-direction: column;
     margin: 20px;
+    width: 100%;
 }
 #search-container{
     width: 100%;
@@ -66,3 +77,30 @@ nav{
     cursor: pointer;
 }
 
+.rightContentContainer{
+    width: 100%;
+    background-color: beige;
+    display: table-column;
+    overflow: scroll;
+}
+
+
+#container-enseigne{
+    overflow: auto;
+    max-height: 550px;
+}
+
+.labelCell{
+    text-align: right;
+}
+
+.valueCell{
+    text-align: left;
+}
+
+.dataSheetTable {
+    border-collapse: separate;
+    border-spacing: 15px;
+    margin-top: 10%;
+    margin-left: 0px;
+}
