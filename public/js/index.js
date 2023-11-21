@@ -58,14 +58,17 @@ function createADataSheet(name,ANumber,AWayname,ACity,APostalCode,ALat,ALng)
 
         let mapContainer = document.createElement('div');
         mapContainer.id = 'mapContainer';
-
         dataSheetContainer.appendChild(mapContainer);
+
+
+
 
         mapboxgl.accessToken= 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
         const map = new mapboxgl.Map({
             container: 'mapContainer', // container ID
-            style: 'mapbox://styles/mapbox/streets-v12', // style URL
+            style: 'mapbox://styles/mapbox/streets-v12',// style URL
             center: [ALat,ALng],
+            projection: 'globe',
             zoom: 9
         });
 

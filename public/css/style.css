@@ -104,3 +104,10 @@ nav{
     margin-top: 10%;
     margin-left: 0px;
 }
+
+
+#mapContainer{
+    width: 100%;
+    height: 100%;
+
+}
