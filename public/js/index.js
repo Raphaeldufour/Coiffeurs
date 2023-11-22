@@ -17,6 +17,20 @@ let affichageEnseignes = [];
 
 function createMapFor(Lat, Lng) {
 
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
+    const map = new mapboxgl.Map({
+        container: 'mapContainer', // container ID
+        style: 'mapbox://styles/mapbox/satellite-streets-v12',// style URL
+        center: [Lng, Lat],
+        zoom: 18,
+
+    });
+
+    const marker = new mapboxgl.Marker()
+        .setLngLat([Lng, Lat])
+        .addTo(map);
+
 }
 
 
@@ -78,37 +92,14 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
 
         if (dataSheetContainer.classList.contains('dataSheetOpened')) {
 
-            mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
-            const map = new mapboxgl.Map({
-                container: 'mapContainer', // container ID
-                style: 'mapbox://styles/mapbox/satellite-streets-v12',// style URL
-                center: [ALng, ALat],
-                zoom: 18,
-
-            });
-
-            const marker = new mapboxgl.Marker()
-                .setLngLat([ALng, ALat])
-                .addTo(map);
+            createMapFor(ALat, ALng)
 
         } else {
-
-
             dataSheetContainer.addEventListener('transitionend', (event) => {
                 dataSheetContainer.classList.add('dataSheetOpened');
                 console.log('je suis passé dans l event listener');
-                mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
-                const map = new mapboxgl.Map({
-                    container: 'mapContainer', // container ID
-                    style: 'mapbox://styles/mapbox/satellite-streets-v12',// style URL
-                    center: [ALng, ALat],
-                    zoom: 18,
 
-                });
-
-                const marker = new mapboxgl.Marker()
-                    .setLngLat([ALng, ALat])
-                    .addTo(map);
+                createMapFor(ALat, ALng)
 
             });
 
