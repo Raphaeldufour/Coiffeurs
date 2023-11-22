@@ -46,7 +46,7 @@ nav{
     margin: 20px;
     width: 100000%;
     transition: width 2s ease-in-out;
-
+    overflow: auto;
 
 }
 #search-container{
@@ -99,7 +99,6 @@ nav{
 
 
 #container-enseigne{
-    overflow: auto;
 }
 
 .labelCell{

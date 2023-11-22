@@ -136,7 +136,7 @@ function checkScroll() {
     }
     */
 
-    const container = document.getElementById('container-enseigne');
+    const container = document.getElementById('leftContentContainer');
     const scrollableHeight = container.scrollHeight - container.clientHeight;
     const scrollTop = container.scrollTop;
 
@@ -223,7 +223,7 @@ function init() {
             indexPage += 10;
             nombreCoiffeurs.textContent = enseignes.length.toString();
         });
-    containerEnseigne.addEventListener('scroll', checkScroll);
+    leftContentContainer.addEventListener('scroll', checkScroll);
     inputRecherche.addEventListener('input', filterEnseignes);
 }
 
