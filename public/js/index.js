@@ -10,19 +10,25 @@ const mainContainer = document.getElementById('main');
 const leftContentContainer = document.getElementById('leftContentContainer');
 
 
-
 let indexPage = 10;
 let enseignes = [];
 let affichageEnseignes = [];
 
 
+function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALng) {
+    if (sessionStorage.getItem('isLoggedIn') !== 'true') {
 
-function createADataSheet(name,ANumber,AWayname,ACity,APostalCode,ALat,ALng)
-{
-    if(sessionStorage.getItem('isLoggedIn') !== 'true') {
+        let leftContentContainer = document.getElementById('leftContentContainer');
+
+        leftContentContainer.style.width = '100%' ;
         let dataSheetContainer = document.getElementById('rightContentContainer');
+
+
+
         dataSheetContainer.classList.add('rightContentContainer');
+        dataSheetContainer.classList.add('openingDataSheet');
         dataSheetContainer.innerText = '';
+        dataSheetContainer.scrollTop = 0;
 
 
         let table = document.createElement('table');
@@ -41,17 +47,21 @@ function createADataSheet(name,ANumber,AWayname,ACity,APostalCode,ALat,ALng)
             let labelCell = document.createElement('td');
             labelCell.classList.add('labelCell');
             labelCell.textContent = rowData.label;
+            labelCell.style.fontWeight = 'bold';
 
             let valueCell = document.createElement('td');
             valueCell.classList.add('valueCell');
             valueCell.textContent = rowData.value;
+            if(rowData.label === 'Nom')
+            {
+                valueCell.style.fontWeight = 'bold';
+            }
 
             row.appendChild(labelCell);
             row.appendChild(valueCell);
 
             table.appendChild(row);
         });
-
 
 
         dataSheetContainer.appendChild(table);
@@ -61,23 +71,23 @@ function createADataSheet(name,ANumber,AWayname,ACity,APostalCode,ALat,ALng)
         dataSheetContainer.appendChild(mapContainer);
 
 
-
-
-        mapboxgl.accessToken= 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
+        mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
         const map = new mapboxgl.Map({
             container: 'mapContainer', // container ID
-            style: 'mapbox://styles/mapbox/streets-v12',// style URL
-            center: [ALat,ALng],
-            projection: 'globe',
-            zoom: 9
+            style: 'mapbox://styles/mapbox/satellite-streets-v12',// style URL
+            center: [ALng, ALat],
+            zoom: 18,
+
         });
 
+        const marker = new mapboxgl.Marker()
+            .setLngLat([ALng, ALat])
+            .addTo(map);
 
 
     }
 
 }
-
 
 
 function getEnseignes() {
@@ -89,11 +99,10 @@ function renderEnseigne(enseigne, index) {
     const clone = templateEnseigne.content.cloneNode(true);
 
 
+    clone.querySelector('.enseigne-coiffeur').addEventListener('click', () => {
 
-    clone.querySelector('.enseigne-coiffeur').addEventListener('click', ()=>
-        {
-createADataSheet(enseigne.nom,enseigne.num ??'',enseigne.voie,enseigne.ville,enseigne.codepostal,enseigne.lat,enseigne.lng);
-    }
+            createADataSheet(enseigne.nom, enseigne.num ?? '', enseigne.voie, enseigne.ville, enseigne.codepostal, enseigne.lat, enseigne.lng);
+        }
     )
 
     clone.querySelector('.enseigne-coiffeur-nom').textContent = enseigne.nom;
@@ -115,8 +124,8 @@ function renderEnseignes(enseignes, startIndex, endIndex) {
 }
 
 function loadMoreEnseignes(enseignes) {
-        renderEnseignes(enseignes, indexPage - 10, indexPage);
-        indexPage += 10;
+    renderEnseignes(enseignes, indexPage - 10, indexPage);
+    indexPage += 10;
 }
 
 function checkScroll() {
@@ -153,14 +162,11 @@ function filterEnseignes() {
 }
 
 
-
-function checkLogin()
-{
+function checkLogin() {
     let isLogged = sessionStorage.getItem('isLoggedIn');
     console.log(isLogged);
 
-    if (isLogged === 'true')
-    {
+    if (isLogged === 'true') {
         let addPersonButton = document.createElement('span');
         let imgAdd = document.createElement('img');
         imgAdd.src = 'img/addperson.svg';
@@ -171,14 +177,9 @@ function checkLogin()
         logImgContainer.appendChild(addPersonButton);
 
 
-
-
-
-
         let logoutButton = document.createElement('span');
 
-        logoutButton.addEventListener('click', () =>
-            {
+        logoutButton.addEventListener('click', () => {
                 sessionStorage.setItem('isLoggedIn', 'false');
                 window.location.reload();
             }
@@ -192,8 +193,7 @@ function checkLogin()
         logoutButton.appendChild(imgLogout);
 
         logImgContainer.appendChild(logoutButton);
-    }else
-    {
+    } else {
         let loginButton = document.createElement('a');
         loginButton.href = '/login.html';
 
@@ -207,8 +207,6 @@ function checkLogin()
         logImgContainer.appendChild(loginButton);
     }
 }
-
-
 
 
 function init() {

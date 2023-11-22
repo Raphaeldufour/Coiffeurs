@@ -25,16 +25,24 @@ nav{
 }
 
 #main{
+
     display: flex;
     flex-direction: row;
+
+
 }
+
+
 
 #leftContentContainer{
     display: flex;
     justify-content: center;
     flex-direction: column;
     margin: 20px;
-    width: 100%;
+    width: 100000%;
+    transition: width 2s ease-in-out;
+
+
 }
 #search-container{
     width: 100%;
@@ -78,11 +86,11 @@ nav{
 }
 
 .rightContentContainer{
-    width: 100%;
     background-color: beige;
     display: table-column;
     overflow: scroll;
 }
+
 
 
 #container-enseigne{
@@ -101,13 +109,39 @@ nav{
 .dataSheetTable {
     border-collapse: separate;
     border-spacing: 15px;
-    margin-top: 10%;
-    margin-left: 0px;
+    margin-top: 2%;
+    margin-left: 10%;
+    margin-bottom: 5%;
 }
 
 
 #mapContainer{
-    width: 100%;
-    height: 100%;
+    height: 60%;
 
 }
+
+
+.openingDataSheet{
+
+    /*
+    animation: slideFromRight 1.5s ease-in-out;
+     */
+
+    width: 100%;
+    transition: width 2s ease-in;
+
+
+}
+
+
+
+
+@keyframes slideFromRight {
+    from {
+        transform: translateX(100%); /* Commence à droite de l'écran */
+    }
+    to {
+        transform: translateX(0); /* Se déplace vers la gauche pour apparaître */
+    }
+}
+
