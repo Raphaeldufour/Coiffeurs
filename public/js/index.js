@@ -41,35 +41,37 @@ function createMapFor(Lat, Lng)
 
 function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALng, inSwitching) {
     dataSheetContainer.innerText = '';
-
-
     dataSheetContainer.style.width = '100%';
+
+
+    let closeButton = document.createElement('button');
+    console.log(inSwitching);
+
+    closeButton.id = 'closeButton';
+    if(inSwitching===true){
+        closeButton.style.animation = 'none';
+    }else
+    {
+        closeButton.classList.add('appears');
+    }
+    closeButton.textContent = 'X';
+
+
+    closeButton.addEventListener('click', (e) => {
+
+        dataSheetContainer.style.width = '0%';
+        closeButton.classList.remove('appears');
+        closeButton.style.animation = 'disappearing 0.5s ease-in-out forwards'
+        dataSheetContainer.classList.remove('dataSheetOpened');
+
+        let selectedElements = document.querySelectorAll('.selected');
+        selectedElements.forEach(element => element.classList.remove('selected'));
+    });
+
+
+
+
     if (sessionStorage.getItem('isLoggedIn') !== 'true') {
-
-
-        let closeButton = document.createElement('button');
-        console.log(inSwitching);
-
-        closeButton.id = 'closeButton';
-        if(inSwitching===true){
-            closeButton.style.animation = 'none';
-        }else
-        {
-            closeButton.classList.add('appears');
-        }
-        closeButton.textContent = 'X';
-
-
-        closeButton.addEventListener('click', (e) => {
-
-            dataSheetContainer.style.width = '0%';
-            closeButton.classList.remove('appears');
-            closeButton.style.animation = 'disappearing 0.5s ease-in-out forwards'
-            dataSheetContainer.classList.remove('dataSheetOpened');
-
-            let selectedElements = document.querySelectorAll('.selected');
-            selectedElements.forEach(element => element.classList.remove('selected'));
-        });
 
 
         dataSheetViewTemplate.content.querySelector('#valueName').textContent = name;
@@ -113,7 +115,10 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
         }
 
 
-    } else {
+    }
+    else
+    {
+
         templateEditCoiffeur.content.getElementById('nom').value = name;
         templateEditCoiffeur.content.getElementById('numero').value = ANumber;
         templateEditCoiffeur.content.getElementById('voie').value = AWayname;
@@ -124,6 +129,10 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
 
         let clone = templateEditCoiffeur.content.cloneNode(true);
         dataSheetContainer.appendChild(clone);
+
+
+        let closeButtonContainer = document.querySelector('.closeButtonContainer');
+        closeButtonContainer.appendChild(closeButton);
 
 
     }
