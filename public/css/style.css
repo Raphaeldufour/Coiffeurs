@@ -91,7 +91,7 @@ nav{
 }
 
 #rightContentContainer{
-    background-color: #F5F5DCFF;
+    background-color: #f1f1f1;
     display: table-column;
     overflow: auto;
     transition: width 1s ease;
@@ -130,6 +130,31 @@ nav{
 
 }
 
+#edit-coiffeur{
+    margin: 0 10px;
+    padding: 37px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+}
+#edit-coiffeur input{
+
+    margin: 10px 0;
+    padding: 5px 5px 5px 10px;
+    background-color: #f3f3f3;
+    border: 0;
+}
+
+#edit-coiffeur button{
+    width: 150px;
+    height: 40px;
+    border: none;
+    border-radius: 30px;
+    background-color: #a73987;
+    color: white;
+    cursor: pointer;
+    align-self: center;
+}
 
 
 

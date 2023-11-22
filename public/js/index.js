@@ -1,4 +1,5 @@
 const templateEnseigne = document.getElementById('template-enseigne');
+const templateEditCoiffeur = document.getElementById('template-edit-coiffeur');
 const containerEnseigne = document.getElementById('container-enseigne');
 const nombreCoiffeurs = document.getElementById('nombre-coiffeur');
 const inputRecherche = document.getElementById('input-recherche');
@@ -8,6 +9,7 @@ const logImgContainer = document.getElementById('logImgContainer');
 const mainContainer = document.getElementById('main');
 
 const leftContentContainer = document.getElementById('leftContentContainer');
+const dataSheetContainer = document.getElementById('rightContentContainer');
 
 
 let indexPage = 10;
@@ -35,19 +37,12 @@ function createMapFor(Lat, Lng) {
 
 
 function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALng) {
+    dataSheetContainer.innerText = '';
+
+
+    dataSheetContainer.style.width = '100%';
     if (sessionStorage.getItem('isLoggedIn') !== 'true') {
 
-        let leftContentContainer = document.getElementById('leftContentContainer');
-
-
-
-        let dataSheetContainer = document.getElementById('rightContentContainer');
-
-
-        dataSheetContainer.innerText = '';
-
-
-        dataSheetContainer.style.width = '100%';
 
         let table = document.createElement('table');
         table.classList.add('dataSheetTable');
@@ -104,6 +99,20 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
 
 
         }
+
+
+    } else {
+        templateEditCoiffeur.content.getElementById('nom').value = name;
+        templateEditCoiffeur.content.getElementById('numero').value = ANumber;
+        templateEditCoiffeur.content.getElementById('voie').value = AWayname;
+        templateEditCoiffeur.content.getElementById('code-postal').value = APostalCode;
+        templateEditCoiffeur.content.getElementById('ville').value = ACity;
+        templateEditCoiffeur.content.getElementById('latitude').value = ALat;
+        templateEditCoiffeur.content.getElementById('longitude').value = ALng;
+
+        let clone = templateEditCoiffeur.content.cloneNode(true);
+        dataSheetContainer.appendChild(clone);
+
 
 
     }
