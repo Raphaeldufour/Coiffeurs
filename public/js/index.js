@@ -11,13 +11,16 @@ const mainContainer = document.getElementById('main');
 const leftContentContainer = document.getElementById('leftContentContainer');
 const dataSheetContainer = document.getElementById('rightContentContainer');
 
+const dataSheetViewTemplate = document.getElementById('template-view-dataSheet');
+
 
 let indexPage = 10;
 let enseignes = [];
 let affichageEnseignes = [];
 
 
-function createMapFor(Lat, Lng) {
+function createMapFor(Lat, Lng)
+{
 
 
     mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
@@ -44,56 +47,59 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
     if (sessionStorage.getItem('isLoggedIn') !== 'true') {
 
 
-        let table = document.createElement('table');
-        table.classList.add('dataSheetTable');
-        let rows = [
-            {label: 'Nom', value: name},
-            {label: 'Numéro', value: ANumber},
-            {label: 'Voie', value: AWayname},
-            {label: 'Code postal', value: APostalCode},
-            {label: 'Ville', value: ACity}
-        ];
+        let closeButton = document.createElement('button');
 
-        rows.forEach(rowData => {
-            let row = document.createElement('tr');
+        closeButton.id = 'closeButton';
+        closeButton.classList.add('appears');
+        closeButton.textContent = 'X';
 
-            let labelCell = document.createElement('td');
-            labelCell.classList.add('labelCell');
-            labelCell.textContent = rowData.label;
-            labelCell.style.fontWeight = 'bold';
 
-            let valueCell = document.createElement('td');
-            valueCell.classList.add('valueCell');
-            valueCell.textContent = rowData.value;
-            if (rowData.label === 'Nom') {
-                valueCell.style.fontWeight = 'bold';
-            }
+        closeButton.addEventListener('click', (e) => {
 
-            row.appendChild(labelCell);
-            row.appendChild(valueCell);
+            dataSheetContainer.style.width = '0%';
+            closeButton.classList.remove('appears');
+            closeButton.style.animation = 'disappearing 0.5s ease-in-out forwards'
+            dataSheetContainer.classList.remove('dataSheetOpened');
 
-            table.appendChild(row);
+            let selectedElements = document.querySelectorAll('.selected');
+            selectedElements.forEach(element => element.classList.remove('selected'));
         });
 
 
-        dataSheetContainer.appendChild(table);
+        dataSheetViewTemplate.content.querySelector('#valueName').textContent = name;
+        dataSheetViewTemplate.content.querySelector('#valueNumber').textContent = ANumber;
+        dataSheetViewTemplate.content.querySelector('#valueWay').textContent = AWayname;
+        dataSheetViewTemplate.content.querySelector('#valuePostalCode').textContent = APostalCode;
+        dataSheetViewTemplate.content.querySelector('#valueCity').textContent = ACity;
 
 
-        let mapContainer = document.createElement('div');
-        mapContainer.id = 'mapContainer';
-        dataSheetContainer.appendChild(mapContainer);
+        dataSheetContainer.appendChild(dataSheetViewTemplate.content.cloneNode(true));
+
+        let closeButtonContainer = document.querySelector('#closeButtonContainer');
+        closeButtonContainer.appendChild(closeButton);
 
 
         if (dataSheetContainer.classList.contains('dataSheetOpened')) {
 
             createMapFor(ALat, ALng)
 
-        } else {
+        }
+        else
+        {
             dataSheetContainer.addEventListener('transitionend', (event) => {
-                dataSheetContainer.classList.add('dataSheetOpened');
-                console.log('je suis passé dans l event listener');
 
-                createMapFor(ALat, ALng)
+                if(dataSheetContainer.style.width === '0%')
+                {
+                    dataSheetContainer.innerHTML = '';
+                }
+                else
+                {
+                    dataSheetContainer.classList.add('dataSheetOpened');
+                    console.log('je suis passé dans l event listener');
+
+                    createMapFor(ALat, ALng)
+                }
+
 
             });
 
@@ -114,7 +120,6 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
         dataSheetContainer.appendChild(clone);
 
 
-
     }
 
 }
@@ -126,12 +131,34 @@ function getEnseignes() {
 }
 
 function renderEnseigne(enseigne, index) {
+
+
+
     const clone = templateEnseigne.content.cloneNode(true);
 
+    let enseigneElement = clone.querySelector('.enseigne-coiffeur');
 
-    clone.querySelector('.enseigne-coiffeur').addEventListener('click', () => {
+    clone.querySelector('.enseigne-coiffeur').addEventListener('click', () =>
+        {
 
-            createADataSheet(enseigne.nom, enseigne.num ?? '', enseigne.voie, enseigne.ville, enseigne.codepostal, enseigne.lat, enseigne.lng);
+
+            if(enseigneElement.classList.contains('selected'))
+            {
+                enseigneElement.classList.remove('selected');
+                dataSheetContainer.style.width = '0%';
+                dataSheetContainer.classList.remove('dataSheetOpened');
+            }
+            else
+            {
+                let selectedElements = document.querySelectorAll('.selected');
+                selectedElements.forEach(element => element.classList.remove('selected'));
+
+                enseigneElement.classList.add('selected');
+                createADataSheet(enseigne.nom, enseigne.num ?? '', enseigne.voie, enseigne.ville, enseigne.codepostal, enseigne.lat, enseigne.lng);
+            }
+
+
+
         }
     )
 

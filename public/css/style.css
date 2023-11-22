@@ -105,13 +105,15 @@ nav{
 
 .labelCell{
     text-align: right;
+    font-weight: bold;
 }
 
-.valueCell{
-    text-align: left;
+
+#valueName{
+    font-weight: bold;
 }
 
-.dataSheetTable {
+#dataSheetTable {
     border-collapse: separate;
     border-spacing: 15px;
     margin-top: 2%;
@@ -126,9 +128,7 @@ nav{
 }
 
 
-.datasheetOpened{
 
-}
 
 #edit-coiffeur{
     margin: 0 10px;
@@ -157,5 +157,64 @@ nav{
 }
 
 
+#closeButton
+{
+    color : #ffffff;
+    background-color: #a73987;
+    border-radius: 50%;
+    font-family: Arial;
+    font-size: 20px;
+    width: 30px;
+    height: 30px;
+    margin-right: 2%;
+    border: none;
 
+    position: absolute;
+    top: 7%;
+
+}
+
+#closeButton:hover
+{
+    cursor: pointer;
+}
+
+.appears{
+    animation: appearing 0.5s forwards;
+}
+
+
+
+
+#closeButtonContainer{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.selected{
+    background-color: #7b208f;
+}
+.selected:hover{
+    background-color: #7b208f;
+}
+
+
+
+@keyframes appearing {
+    from {
+        transform: scale(0) rotate(-40deg);
+    }
+    to {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes disappearing {
+    from {
+        transform: scale(1) rotate(0deg);
+    }
+    to {
+        transform: scale(0) rotate(-40deg);
+    }
+}
 
