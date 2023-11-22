@@ -40,12 +40,11 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
         let leftContentContainer = document.getElementById('leftContentContainer');
 
 
-        leftContentContainer.style.width = '100%';
+
         let dataSheetContainer = document.getElementById('rightContentContainer');
 
 
         dataSheetContainer.innerText = '';
-        dataSheetContainer.scrollTop = 0;
 
 
         dataSheetContainer.style.width = '100%';
@@ -151,12 +150,6 @@ function loadMoreEnseignes(enseignes) {
 }
 
 function checkScroll() {
-
-    /*
-    if ((window.scrollY + window.innerHeight) >= document.body.offsetHeight) {
-        loadMoreEnseignes(affichageEnseignes);
-    }
-    */
 
     const container = document.getElementById('leftContentContainer');
     const scrollableHeight = container.scrollHeight - container.clientHeight;
