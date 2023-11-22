@@ -20,16 +20,19 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
 
         let leftContentContainer = document.getElementById('leftContentContainer');
 
+
         leftContentContainer.style.width = '100%' ;
         let dataSheetContainer = document.getElementById('rightContentContainer');
 
 
 
-        dataSheetContainer.classList.add('rightContentContainer');
-        dataSheetContainer.classList.add('openingDataSheet');
+
+
         dataSheetContainer.innerText = '';
         dataSheetContainer.scrollTop = 0;
 
+
+        dataSheetContainer.style.width = '100%';
 
         let table = document.createElement('table');
         table.classList.add('dataSheetTable');

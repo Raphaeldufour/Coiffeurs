@@ -44,8 +44,8 @@ nav{
     display: flex;
     flex-direction: column;
     margin: 20px;
-    width: 100000%;
-    transition: width 2s ease-in-out;
+    transition: width 2s ease;
+    width: 100%;
     overflow: auto;
 
 }
@@ -90,10 +90,12 @@ nav{
     cursor: pointer;
 }
 
-.rightContentContainer{
+#rightContentContainer{
     background-color: #F5F5DCFF;
     display: table-column;
-    overflow: scroll;
+    overflow: auto;
+    transition: width 2s ease;
+    width: 0;
 }
 
 
@@ -124,27 +126,8 @@ nav{
 }
 
 
-.openingDataSheet{
-
-    /*
-    animation: slideFromRight 1.5s ease-in-out;
-     */
-
-    width: 100%;
-    transition: width 2s ease-in;
-
-
-}
 
 
 
 
-@keyframes slideFromRight {
-    from {
-        transform: translateX(100%); /* Commence à droite de l'écran */
-    }
-    to {
-        transform: translateX(0); /* Se déplace vers la gauche pour apparaître */
-    }
-}
 
