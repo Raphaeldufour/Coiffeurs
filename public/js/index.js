@@ -39,7 +39,7 @@ function createMapFor(Lat, Lng)
 }
 
 
-function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALng) {
+function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALng, inSwitching) {
     dataSheetContainer.innerText = '';
 
 
@@ -48,9 +48,15 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
 
 
         let closeButton = document.createElement('button');
+        console.log(inSwitching);
 
         closeButton.id = 'closeButton';
-        closeButton.classList.add('appears');
+        if(inSwitching===true){
+            closeButton.style.animation = 'none';
+        }else
+        {
+            closeButton.classList.add('appears');
+        }
         closeButton.textContent = 'X';
 
 
@@ -75,7 +81,7 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
 
         dataSheetContainer.appendChild(dataSheetViewTemplate.content.cloneNode(true));
 
-        let closeButtonContainer = document.querySelector('#closeButtonContainer');
+        let closeButtonContainer = document.querySelector('.closeButtonContainer');
         closeButtonContainer.appendChild(closeButton);
 
 
@@ -141,20 +147,30 @@ function renderEnseigne(enseigne, index) {
     clone.querySelector('.enseigne-coiffeur').addEventListener('click', () =>
         {
 
+            let inSwitching = false;
+            if((document.querySelectorAll('.selected')).length === 1)
+            {
+                inSwitching = true;
+            }
+
 
             if(enseigneElement.classList.contains('selected'))
             {
+                let closeButtun = document.getElementById('closeButton');
+                closeButtun.click();
                 enseigneElement.classList.remove('selected');
-                dataSheetContainer.style.width = '0%';
-                dataSheetContainer.classList.remove('dataSheetOpened');
+
             }
             else
             {
                 let selectedElements = document.querySelectorAll('.selected');
+
                 selectedElements.forEach(element => element.classList.remove('selected'));
 
                 enseigneElement.classList.add('selected');
-                createADataSheet(enseigne.nom, enseigne.num ?? '', enseigne.voie, enseigne.ville, enseigne.codepostal, enseigne.lat, enseigne.lng);
+
+
+                createADataSheet(enseigne.nom, enseigne.num ?? '', enseigne.voie, enseigne.ville, enseigne.codepostal, enseigne.lat, enseigne.lng,inSwitching);
             }
 
 
