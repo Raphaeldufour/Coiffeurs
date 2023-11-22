@@ -44,7 +44,7 @@ nav{
     display: flex;
     flex-direction: column;
     margin: 20px;
-    transition: width 2s ease;
+    transition: width 1s ease;
     width: 100%;
     overflow: auto;
 
@@ -94,7 +94,7 @@ nav{
     background-color: #F5F5DCFF;
     display: table-column;
     overflow: auto;
-    transition: width 2s ease;
+    transition: width 1s ease;
     width: 0;
 }
 
@@ -126,6 +126,9 @@ nav{
 }
 
 
+.datasheetOpened{
+
+}
 
 
 

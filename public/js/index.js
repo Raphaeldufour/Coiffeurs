@@ -15,17 +15,19 @@ let enseignes = [];
 let affichageEnseignes = [];
 
 
+function createMapFor(Lat, Lng) {
+
+}
+
+
 function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALng) {
     if (sessionStorage.getItem('isLoggedIn') !== 'true') {
 
         let leftContentContainer = document.getElementById('leftContentContainer');
 
 
-        leftContentContainer.style.width = '100%' ;
+        leftContentContainer.style.width = '100%';
         let dataSheetContainer = document.getElementById('rightContentContainer');
-
-
-
 
 
         dataSheetContainer.innerText = '';
@@ -55,8 +57,7 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
             let valueCell = document.createElement('td');
             valueCell.classList.add('valueCell');
             valueCell.textContent = rowData.value;
-            if(rowData.label === 'Nom')
-            {
+            if (rowData.label === 'Nom') {
                 valueCell.style.fontWeight = 'bold';
             }
 
@@ -69,23 +70,50 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
 
         dataSheetContainer.appendChild(table);
 
+
         let mapContainer = document.createElement('div');
         mapContainer.id = 'mapContainer';
         dataSheetContainer.appendChild(mapContainer);
 
 
-        mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
-        const map = new mapboxgl.Map({
-            container: 'mapContainer', // container ID
-            style: 'mapbox://styles/mapbox/satellite-streets-v12',// style URL
-            center: [ALng, ALat],
-            zoom: 18,
+        if (dataSheetContainer.classList.contains('dataSheetOpened')) {
 
-        });
+            mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
+            const map = new mapboxgl.Map({
+                container: 'mapContainer', // container ID
+                style: 'mapbox://styles/mapbox/satellite-streets-v12',// style URL
+                center: [ALng, ALat],
+                zoom: 18,
 
-        const marker = new mapboxgl.Marker()
-            .setLngLat([ALng, ALat])
-            .addTo(map);
+            });
+
+            const marker = new mapboxgl.Marker()
+                .setLngLat([ALng, ALat])
+                .addTo(map);
+
+        } else {
+
+
+            dataSheetContainer.addEventListener('transitionend', (event) => {
+                dataSheetContainer.classList.add('dataSheetOpened');
+                console.log('je suis passé dans l event listener');
+                mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
+                const map = new mapboxgl.Map({
+                    container: 'mapContainer', // container ID
+                    style: 'mapbox://styles/mapbox/satellite-streets-v12',// style URL
+                    center: [ALng, ALat],
+                    zoom: 18,
+
+                });
+
+                const marker = new mapboxgl.Marker()
+                    .setLngLat([ALng, ALat])
+                    .addTo(map);
+
+            });
+
+
+        }
 
 
     }
