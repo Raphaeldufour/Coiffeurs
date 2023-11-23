@@ -3,43 +3,41 @@ const passwordContainer = document.getElementById("password-input");
 const loginButton = document.getElementById("login-submit");
 const cancelButton = document.getElementById("cancel-button");
 
-let loginToEnter = "";
-let passwordToEnter = "";
-
-
 
 cancelButton.addEventListener("click", (click) => {
     sessionStorage.setItem('isLoggedIn', 'false');
     click.preventDefault();
-
     window.location.href = "http://localhost:3000";
 });
 
+loginButton.addEventListener("click", handleLoginFormSubmission);
 
-
-function getUserNameAndPassword()
-{
-    return fetch('/api/logintoenter').then(response => response.json())
+async function checkLoginAndPassword(data) {
+        const response = await fetch('http://localhost:3000/user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        return response;
 }
 
-
-
-getUserNameAndPassword().then((data) => {
-    console.log(data);
-    loginToEnter = data.login.email;
-    passwordToEnter = data.login.mdp;
-
-    loginButton.addEventListener("click", checkLoginAndPassword);
-});
-
-function checkLoginAndPassword(click) {
+async function handleLoginFormSubmission(click) {
     click.preventDefault(); //Comme c'est un submit c'est pour empêcher le comportement par défaut (qui est de recharger la page)
-
-    if (loginToEnter === emailContainer.value && passwordToEnter === passwordContainer.value) {
+    const email = emailContainer.value;
+    const password = passwordContainer.value;
+    const data = {
+        email: email,
+        password: password
+    };
+    const response = await checkLoginAndPassword(data);
+    if (response.ok) {
         sessionStorage.setItem('isLoggedIn', 'true');
         window.location.href = "http://localhost:3000";
     } else {
-        alert("Login ou mot de passe incorrect");
+        const error = await response.json();
+        alert(error.message);
     }
 }
 
