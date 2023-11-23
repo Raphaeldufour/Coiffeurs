@@ -37,16 +37,17 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
 
     closeButton.id = 'closeButton';
     if (inSwitching === true) {
-        closeButton.style.animation = 'none';
+        closeButton.classList.remove('appearing')
+        closeButton.classList.remove('disappearing')
     } else {
-        closeButton.classList.add('appears');
+        closeButton.classList.add('appearing');
     }
     closeButton.textContent = 'X';
 
     closeButton.addEventListener('click', (e) => {
         dataSheetContainer.classList.remove('dataSheetOpened');
-        closeButton.classList.remove('appears');
-        closeButton.style.animation = 'disappearing 0.5s ease-in-out forwards'
+        closeButton.classList.remove('appearing');
+        closeButton.classList.add('disappearing');
         dataSheetContainer.classList.remove('dataSheetOpened');
 
         let selectedElements = document.querySelectorAll('.selected');

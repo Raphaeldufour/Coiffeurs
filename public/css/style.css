@@ -183,9 +183,14 @@ nav{
     cursor: pointer;
 }
 
-.appears{
+#closeButton.appearing{
     animation: appearing 0.5s forwards;
 }
+
+#closeButton.disappearing{
+    animation: disappearing 0.5s forwards;
+}
+
 
 
 
