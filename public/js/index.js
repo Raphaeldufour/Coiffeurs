@@ -57,7 +57,7 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
     closeButton.textContent = 'X';
 
 
-    closeButton.addEventListener('click', (e) => {
+    closeButton.addEventListener('click', () => {
 
         dataSheetContainer.style.width = '0%';
         closeButton.classList.remove('appears');
@@ -87,7 +87,8 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
         closeButtonContainer.appendChild(closeButton);
 
 
-        if (dataSheetContainer.classList.contains('dataSheetOpened')) {
+        if (dataSheetContainer.classList.contains('dataSheetOpened'))
+        {
 
             createMapFor(ALat, ALng)
 

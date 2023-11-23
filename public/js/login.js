@@ -17,7 +17,8 @@ cancelButton.addEventListener("click", (click) => {
 
 
 
-function getUserNameAndPassword() {
+function getUserNameAndPassword()
+{
     return fetch('/api/logintoenter').then(response => response.json())
 }
 

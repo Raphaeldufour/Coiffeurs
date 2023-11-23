@@ -204,7 +204,8 @@ nav{
     from {
         transform: scale(0) rotate(-40deg);
     }
-    to {
+    to
+    {
         transform: scale(1) rotate(0deg);
     }
 }
@@ -213,7 +214,8 @@ nav{
     from {
         transform: scale(1) rotate(0deg);
     }
-    to {
+    to
+    {
         transform: scale(0) rotate(-40deg);
     }
 }
