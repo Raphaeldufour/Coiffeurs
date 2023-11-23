@@ -3,16 +3,11 @@ const templateEditCoiffeur = document.getElementById('template-edit-coiffeur');
 const containerEnseigne = document.getElementById('container-enseigne');
 const nombreCoiffeurs = document.getElementById('nombre-coiffeur');
 const inputRecherche = document.getElementById('input-recherche');
-
 const logImgContainer = document.getElementById('logImgContainer');
-
 const mainContainer = document.getElementById('main');
-
 const leftContentContainer = document.getElementById('leftContentContainer');
 const dataSheetContainer = document.getElementById('rightContentContainer');
-
 const dataSheetViewTemplate = document.getElementById('template-view-dataSheet');
-
 
 let indexPage = 10;
 let enseignes = [];
@@ -21,28 +16,22 @@ let affichageEnseignes = [];
 
 function createMapFor(Lat, Lng)
 {
-
-
     mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
     const map = new mapboxgl.Map({
         container: 'mapContainer', // container ID
         style: 'mapbox://styles/mapbox/satellite-streets-v12',// style URL
         center: [Lng, Lat],
         zoom: 18,
-
     });
 
     const marker = new mapboxgl.Marker()
         .setLngLat([Lng, Lat])
         .addTo(map);
-
 }
-
 
 function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALng, inSwitching) {
     dataSheetContainer.innerText = '';
     dataSheetContainer.style.width = '100%';
-
 
     let closeButton = document.createElement('button');
     console.log(inSwitching);
@@ -56,9 +45,7 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
     }
     closeButton.textContent = 'X';
 
-
-    closeButton.addEventListener('click', () => {
-
+    closeButton.addEventListener('click', (e) => {
         dataSheetContainer.style.width = '0%';
         closeButton.classList.remove('appears');
         closeButton.style.animation = 'disappearing 0.5s ease-in-out forwards'
@@ -67,31 +54,19 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
         let selectedElements = document.querySelectorAll('.selected');
         selectedElements.forEach(element => element.classList.remove('selected'));
     });
-
-
-
-
     if (sessionStorage.getItem('isLoggedIn') !== 'true') {
-
-
         dataSheetViewTemplate.content.querySelector('#valueName').textContent = name;
         dataSheetViewTemplate.content.querySelector('#valueNumber').textContent = ANumber;
         dataSheetViewTemplate.content.querySelector('#valueWay').textContent = AWayname;
         dataSheetViewTemplate.content.querySelector('#valuePostalCode').textContent = APostalCode;
         dataSheetViewTemplate.content.querySelector('#valueCity').textContent = ACity;
 
-
         dataSheetContainer.appendChild(dataSheetViewTemplate.content.cloneNode(true));
-
         let closeButtonContainer = document.querySelector('.closeButtonContainer');
         closeButtonContainer.appendChild(closeButton);
-
-
-        if (dataSheetContainer.classList.contains('dataSheetOpened'))
-        {
+        if (dataSheetContainer.classList.contains('dataSheetOpened')) {
 
             createMapFor(ALat, ALng)
-
         }
         else
         {
@@ -108,18 +83,11 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
 
                     createMapFor(ALat, ALng)
                 }
-
-
             });
-
-
         }
-
-
     }
     else
     {
-
         templateEditCoiffeur.content.getElementById('nom').value = name;
         templateEditCoiffeur.content.getElementById('numero').value = ANumber;
         templateEditCoiffeur.content.getElementById('voie').value = AWayname;
@@ -131,60 +99,42 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
         let clone = templateEditCoiffeur.content.cloneNode(true);
         dataSheetContainer.appendChild(clone);
 
-
         let closeButtonContainer = document.querySelector('.closeButtonContainer');
         closeButtonContainer.appendChild(closeButton);
-
-
     }
 
 }
 
-
+//TODO : changer la fonction getEnseignes en mettant en async et await
 function getEnseignes() {
     return fetch('/api/enseignes')
         .then(response => response.json())
 }
 
 function renderEnseigne(enseigne, index) {
-
-
-
     const clone = templateEnseigne.content.cloneNode(true);
-
     let enseigneElement = clone.querySelector('.enseigne-coiffeur');
 
     clone.querySelector('.enseigne-coiffeur').addEventListener('click', () =>
         {
-
             let inSwitching = false;
             if((document.querySelectorAll('.selected')).length === 1)
             {
                 inSwitching = true;
             }
-
-
             if(enseigneElement.classList.contains('selected'))
             {
                 let closeButtun = document.getElementById('closeButton');
                 closeButtun.click();
                 enseigneElement.classList.remove('selected');
-
             }
             else
             {
                 let selectedElements = document.querySelectorAll('.selected');
-
                 selectedElements.forEach(element => element.classList.remove('selected'));
-
                 enseigneElement.classList.add('selected');
-
-
                 createADataSheet(enseigne.nom, enseigne.num ?? '', enseigne.voie, enseigne.ville, enseigne.codepostal, enseigne.lat, enseigne.lng,inSwitching);
             }
-
-
-
         }
     )
 
@@ -193,7 +143,6 @@ function renderEnseigne(enseigne, index) {
     clone.querySelector('.enseigne-coiffeur-rue').textContent = numero + ' ' + enseigne.voie;
     clone.querySelector('.enseigne-coiffeur-ville').textContent = enseigne.codepostal + ' ' + enseigne.ville;
     clone.querySelector('.enseigne-coiffeur-index').textContent = index;
-
 
     containerEnseigne.appendChild(clone);
 }
@@ -253,7 +202,6 @@ function checkLogin() {
         addPersonButton.appendChild(imgAdd);
         logImgContainer.appendChild(addPersonButton);
 
-
         let logoutButton = document.createElement('span');
 
         logoutButton.addEventListener('click', () => {
@@ -285,13 +233,9 @@ function checkLogin() {
     }
 }
 
-
 function init() {
-
     checkLogin();
     containerEnseigne.scrollTop = 0;
-
-
     getEnseignes()
         .then(initialEnsignes => {
             enseignes = initialEnsignes;
