@@ -30,7 +30,7 @@ function createMapFor(Lat, Lng) {
 
 function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALng, inSwitching) {
     dataSheetContainer.innerText = '';
-    dataSheetContainer.style.width = '100%';
+    dataSheetContainer.classList.add('dataSheetOpened');
 
     let closeButton = document.createElement('button');
     console.log(inSwitching);
@@ -44,7 +44,7 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
     closeButton.textContent = 'X';
 
     closeButton.addEventListener('click', (e) => {
-        dataSheetContainer.style.width = '0%';
+        dataSheetContainer.classList.remove('dataSheetOpened');
         closeButton.classList.remove('appears');
         closeButton.style.animation = 'disappearing 0.5s ease-in-out forwards'
         dataSheetContainer.classList.remove('dataSheetOpened');
@@ -62,22 +62,23 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
         dataSheetContainer.appendChild(dataSheetViewTemplate.content.cloneNode(true));
         let closeButtonContainer = document.querySelector('.closeButtonContainer');
         closeButtonContainer.appendChild(closeButton);
-        if (dataSheetContainer.classList.contains('dataSheetOpened')) {
 
+        if(dataSheetContainer.classList.contains('dataSheetOpened') === true && inSwitching === true)
+        {
             createMapFor(ALat, ALng)
-        } else {
-            dataSheetContainer.addEventListener('transitionend', (event) => {
-
-                if (dataSheetContainer.style.width === '0%') {
-                    dataSheetContainer.innerHTML = '';
-                } else {
-                    dataSheetContainer.classList.add('dataSheetOpened');
-                    console.log('je suis passé dans l event listener');
-
-                    createMapFor(ALat, ALng)
-                }
-            });
         }
+
+        dataSheetContainer.addEventListener('transitionend', (event) => {
+            if (dataSheetContainer.classList.contains('dataSheetOpened') === false) {
+                dataSheetContainer.innerText = '';
+            } else {
+                dataSheetContainer.classList.add('dataSheetOpened');
+                console.log('je suis passé dans l event listener');
+
+                createMapFor(ALat, ALng)
+            }
+        });
+
     } else {
         templateEditCoiffeur.content.getElementById('nom').value = name;
         templateEditCoiffeur.content.getElementById('numero').value = ANumber;
@@ -97,9 +98,10 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
 }
 
 //TODO : changer la fonction getEnseignes en mettant en async et await
-function getEnseignes() {
-    return fetch('/api/enseignes')
-        .then(response => response.json())
+async function getEnseignes() {
+    const response = await fetch('/api/enseignes');
+    const companies = await response.json();
+    return companies;
 }
 
 function renderEnseigne(enseigne, index) {

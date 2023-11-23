@@ -121,6 +121,10 @@ nav{
     margin-bottom: 5%;
 }
 
+#rightContentContainer.dataSheetOpened {
+    width: 100%;
+}
+
 
 #mapContainer{
     height: 60%;

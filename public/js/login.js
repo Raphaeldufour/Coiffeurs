@@ -2,8 +2,6 @@ const emailContainer = document.getElementById("login-input");
 const passwordContainer = document.getElementById("password-input");
 const loginButton = document.getElementById("login-submit");
 const cancelButton = document.getElementById("cancel-button");
-
-
 cancelButton.addEventListener("click", (click) => {
     sessionStorage.setItem('isLoggedIn', 'false');
     click.preventDefault();
@@ -11,7 +9,6 @@ cancelButton.addEventListener("click", (click) => {
 });
 
 loginButton.addEventListener("click", handleLoginFormSubmission);
-
 async function checkLoginAndPassword(data) {
         const response = await fetch('http://localhost:3000/user', {
             method: 'POST',
@@ -22,7 +19,6 @@ async function checkLoginAndPassword(data) {
         });
         return response;
 }
-
 async function handleLoginFormSubmission(click) {
     click.preventDefault(); //Comme c'est un submit c'est pour empêcher le comportement par défaut (qui est de recharger la page)
     const email = emailContainer.value;
@@ -40,6 +36,3 @@ async function handleLoginFormSubmission(click) {
         alert(error.message);
     }
 }
-
-
-
