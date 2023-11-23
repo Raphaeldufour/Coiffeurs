@@ -14,8 +14,7 @@ let enseignes = [];
 let affichageEnseignes = [];
 
 
-function createMapFor(Lat, Lng)
-{
+function createMapFor(Lat, Lng) {
     mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
     const map = new mapboxgl.Map({
         container: 'mapContainer', // container ID
@@ -37,10 +36,9 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
     console.log(inSwitching);
 
     closeButton.id = 'closeButton';
-    if(inSwitching===true){
+    if (inSwitching === true) {
         closeButton.style.animation = 'none';
-    }else
-    {
+    } else {
         closeButton.classList.add('appears');
     }
     closeButton.textContent = 'X';
@@ -67,17 +65,12 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
         if (dataSheetContainer.classList.contains('dataSheetOpened')) {
 
             createMapFor(ALat, ALng)
-        }
-        else
-        {
+        } else {
             dataSheetContainer.addEventListener('transitionend', (event) => {
 
-                if(dataSheetContainer.style.width === '0%')
-                {
+                if (dataSheetContainer.style.width === '0%') {
                     dataSheetContainer.innerHTML = '';
-                }
-                else
-                {
+                } else {
                     dataSheetContainer.classList.add('dataSheetOpened');
                     console.log('je suis passé dans l event listener');
 
@@ -85,9 +78,7 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
                 }
             });
         }
-    }
-    else
-    {
+    } else {
         templateEditCoiffeur.content.getElementById('nom').value = name;
         templateEditCoiffeur.content.getElementById('numero').value = ANumber;
         templateEditCoiffeur.content.getElementById('voie').value = AWayname;
@@ -115,25 +106,20 @@ function renderEnseigne(enseigne, index) {
     const clone = templateEnseigne.content.cloneNode(true);
     let enseigneElement = clone.querySelector('.enseigne-coiffeur');
 
-    clone.querySelector('.enseigne-coiffeur').addEventListener('click', () =>
-        {
+    clone.querySelector('.enseigne-coiffeur').addEventListener('click', () => {
             let inSwitching = false;
-            if((document.querySelectorAll('.selected')).length === 1)
-            {
+            if ((document.querySelectorAll('.selected')).length === 1) {
                 inSwitching = true;
             }
-            if(enseigneElement.classList.contains('selected'))
-            {
+            if (enseigneElement.classList.contains('selected')) {
                 let closeButtun = document.getElementById('closeButton');
                 closeButtun.click();
                 enseigneElement.classList.remove('selected');
-            }
-            else
-            {
+            } else {
                 let selectedElements = document.querySelectorAll('.selected');
                 selectedElements.forEach(element => element.classList.remove('selected'));
                 enseigneElement.classList.add('selected');
-                createADataSheet(enseigne.nom, enseigne.num ?? '', enseigne.voie, enseigne.ville, enseigne.codepostal, enseigne.lat, enseigne.lng,inSwitching);
+                createADataSheet(enseigne.nom, enseigne.num ?? '', enseigne.voie, enseigne.ville, enseigne.codepostal, enseigne.lat, enseigne.lng, inSwitching);
             }
         }
     )
