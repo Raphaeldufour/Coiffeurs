@@ -126,7 +126,8 @@ nav{
 }
 
 
-#mapContainer{
+.mapContainer{
+    margin-top: 2%;
     height: 60%;
 
 }

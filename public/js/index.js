@@ -17,7 +17,7 @@ let affichageEnseignes = [];
 function createMapFor(Lat, Lng) {
     mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
     const map = new mapboxgl.Map({
-        container: 'mapContainer', // container ID
+        container: document.querySelector('.mapContainer'), // container
         style: 'mapbox://styles/mapbox/satellite-streets-v12',// style URL
         center: [Lng, Lat],
         zoom: 18,
@@ -63,23 +63,6 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
         dataSheetContainer.appendChild(dataSheetViewTemplate.content.cloneNode(true));
         let closeButtonContainer = document.querySelector('.closeButtonContainer');
         closeButtonContainer.appendChild(closeButton);
-
-        if(dataSheetContainer.classList.contains('dataSheetOpened') === true && inSwitching === true)
-        {
-            createMapFor(ALat, ALng)
-        }
-
-        dataSheetContainer.addEventListener('transitionend', (event) => {
-            if (dataSheetContainer.classList.contains('dataSheetOpened') === false) {
-                dataSheetContainer.innerText = '';
-            } else {
-                dataSheetContainer.classList.add('dataSheetOpened');
-                console.log('je suis passé dans l event listener');
-
-                createMapFor(ALat, ALng)
-            }
-        });
-
     } else {
         templateEditCoiffeur.content.getElementById('nom').value = name;
         templateEditCoiffeur.content.getElementById('numero').value = ANumber;
@@ -95,6 +78,23 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
         let closeButtonContainer = document.querySelector('.closeButtonContainer');
         closeButtonContainer.appendChild(closeButton);
     }
+
+
+    if(dataSheetContainer.classList.contains('dataSheetOpened') === true && inSwitching === true)
+    {
+        createMapFor(ALat, ALng)
+    }
+
+    dataSheetContainer.addEventListener('transitionend', (event) => {
+        if (dataSheetContainer.classList.contains('dataSheetOpened') === false) {
+            dataSheetContainer.innerText = '';
+        } else {
+            dataSheetContainer.classList.add('dataSheetOpened');
+            console.log('je suis passé dans l event listener');
+
+            createMapFor(ALat, ALng)
+        }
+    });
 
 }
 
