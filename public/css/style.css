@@ -208,6 +208,22 @@ nav{
     background-color: #7b208f;
 }
 
+#isModified{
+    color: gray;
+    text-align: center;
+    font-style: oblique;
+    height: 0;
+    overflow: hidden;
+    transition: height 1s ease;
+}
+
+#isModified.showIsModified{
+    height: 25px;
+}
+#isModified.hideIsModified{
+    height: 0;
+}
+
 
 
 @keyframes appearing {
@@ -229,4 +245,6 @@ nav{
         transform: scale(0) rotate(-40deg);
     }
 }
+
+
 

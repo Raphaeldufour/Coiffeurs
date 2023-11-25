@@ -30,6 +30,28 @@ app.get('/api/enseignes', (req, res) => {
     });
 });
 
+app.patch('/api/enseignes/:id', (req, res) => {
+    const data = req.body;
+    const id = data.id;
+    const name = data.name;
+    const lat = data.lat;
+    const lng = data.lng;
+    const num = data.num;
+    const voie = data.voie;
+    const ville = data.ville;
+    const codepostal = data.codepostal;
+
+    db.run('UPDATE enseignes SET nom = ?, lat = ?, lng = ?, num = ?, voie = ?, ville = ?, codepostal = ? WHERE id = ?', [name, lat, lng, num, voie, ville, codepostal, id], (err) => {
+        if (err)
+        {
+            res.status(500).send('Erreur lors de la modification de l\'enseigne');
+        } else {
+            res.json({message: 'Enseigne modifiée avec succès'});
+        }
+    } );
+
+});
+
 
 app.post('/user', (req, res) => {
     const emailBody = req.body.email;

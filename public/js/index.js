@@ -14,6 +14,14 @@ let enseignes = [];
 let affichageEnseignes = [];
 
 
+function dontContainsLetters(str) {
+    return !/[a-zA-Z]/.test(str);
+}
+
+function containsDigits(string) {
+    return /\d/.test(string);
+}
+
 function createMapFor(Lat, Lng) {
     mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
     const map = new mapboxgl.Map({
@@ -28,7 +36,79 @@ function createMapFor(Lat, Lng) {
         .addTo(map);
 }
 
-function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALng, inSwitching) {
+
+function okayForEdit(ancientInfos, newInfos) {
+    isOkay = true;
+    if (
+        isNaN(newInfos[1]) || newInfos[1].includes(' ') || newInfos[1] === '' ||
+        isNaN(newInfos[3]) || newInfos[3].includes(' ') || newInfos[3] === '' ||
+        isNaN(newInfos[5]) || newInfos[5].includes(' ') || newInfos[5] === '' || Math.abs(parseFloat(newInfos[5])) > 90 ||
+        isNaN(newInfos[6]) || newInfos[6].includes(' ') || newInfos[6] === '' || Math.abs(parseFloat(newInfos[6])) > 180
+    ) {
+        isOkay = false;
+    } else if (
+        dontContainsLetters(newInfos[0]) ||
+        dontContainsLetters(newInfos[2]) ||
+        dontContainsLetters(newInfos[4]) || containsDigits(newInfos[4])
+    ) {
+        isOkay = false;
+    } else {
+        console.log(parseFloat(dataSheetContainer.querySelector('#latitude').value))
+        console.log(parseFloat(dataSheetContainer.querySelector('#longitude').value))
+        for (let i = 0; i < newInfos.length; i++) {
+            if (newInfos[i] !== ancientInfos[i]) {
+                isOkay = true
+                console.log('changements');
+                break
+
+            } else {
+                isOkay = false;
+                console.log('pas changement');
+            }
+        }
+    }
+    return isOkay;
+}
+
+
+function editHtmlElement(element, newData, modifLabel) {
+    element.querySelector('.enseigne-coiffeur-nom').textContent = newData[0];
+    element.querySelector('.enseigne-coiffeur-rue').textContent = newData[1] + ' ' + newData[2];
+    element.querySelector('.enseigne-coiffeur-ville').textContent = newData[3] + ' ' + newData[4];
+    modifLabel.classList.add('showIsModified'); // Ajoute la classe pour montrer lentement le message
+
+    setTimeout(() => {
+        modifLabel.classList.remove('showIsModified'); // Enlève la classe pour cacher lentement le message
+    }, 2000);
+}
+
+
+async function sendModifiedData(data) {
+    const response = await fetch('api/enseignes/${id}', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+
+    return response
+}
+
+
+function createADataSheet(enseigneElement, enseigne, inSwitching) {
+    let currentInfos = [enseigne.nom, enseigne.num, enseigne.voie, enseigne.codepostal, enseigne.ville, enseigne.lat, enseigne.lng];
+    id = enseigne.id;
+    console.log(id);
+    let name = enseigne.nom;
+    let ANumber = enseigne.num;
+    let AWayname = enseigne.voie;
+    let APostalCode = enseigne.codepostal;
+    let ACity = enseigne.ville;
+    let ALat = enseigne.lat;
+    let ALng = enseigne.lng;
+
+
     dataSheetContainer.innerText = '';
     dataSheetContainer.classList.add('dataSheetOpened');
 
@@ -63,7 +143,9 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
         dataSheetContainer.appendChild(dataSheetViewTemplate.content.cloneNode(true));
         let closeButtonContainer = document.querySelector('.closeButtonContainer');
         closeButtonContainer.appendChild(closeButton);
-    } else {
+    }
+    else
+    {
         templateEditCoiffeur.content.getElementById('nom').value = name;
         templateEditCoiffeur.content.getElementById('numero').value = ANumber;
         templateEditCoiffeur.content.getElementById('voie').value = AWayname;
@@ -72,16 +154,63 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
         templateEditCoiffeur.content.getElementById('latitude').value = ALat;
         templateEditCoiffeur.content.getElementById('longitude').value = ALng;
 
+
+
+
         let clone = templateEditCoiffeur.content.cloneNode(true);
+        let modifLabel = clone.querySelector('#isModified');
         dataSheetContainer.appendChild(clone);
 
         let closeButtonContainer = document.querySelector('.closeButtonContainer');
         closeButtonContainer.appendChild(closeButton);
+
+        let editButton = document.getElementById('edit-coiffeur-submit');
+
+        editButton.addEventListener('click', () => {
+            let newInfos = [dataSheetContainer.querySelector('#nom').value, dataSheetContainer.querySelector('#numero').value, dataSheetContainer.querySelector('#voie').value, dataSheetContainer.querySelector('#code-postal').value, dataSheetContainer.querySelector('#ville').value, dataSheetContainer.querySelector('#latitude').value, dataSheetContainer.querySelector('#longitude').value];
+
+            if (okayForEdit(currentInfos, newInfos) === true) {
+                const data = {
+                    id: id,
+                    name: newInfos[0],
+                    num: newInfos[1],
+                    voie: newInfos[2],
+                    codepostal: newInfos[3],
+                    ville: newInfos[4],
+                    lat: newInfos[5],
+                    lng: newInfos[6]
+                }
+                const resp = sendModifiedData(data);
+                resp.then(response => {
+                    if (response.ok) {
+                        enseigne.nom = newInfos[0];
+                        enseigne.num = newInfos[1];
+                        enseigne.voie = newInfos[2];
+                        enseigne.codepostal = newInfos[3];
+                        enseigne.ville = newInfos[4];
+                        enseigne.lat = newInfos[5];
+                        enseigne.lng = newInfos[6];
+                        currentInfos = newInfos;
+                        ALat = newInfos[5];
+                        ALng = newInfos[6];
+                        currentInfos = newInfos;
+                        editHtmlElement(enseigneElement, newInfos, modifLabel)
+                    } else {
+                        const error = response.json();
+                        alert(error.message);
+                    }
+                });
+
+            } else {
+                alert("Problème: certains champs n'ont pas été remplis correctement")
+            }
+
+        });
+
     }
 
 
-    if(dataSheetContainer.classList.contains('dataSheetOpened') === true && inSwitching === true)
-    {
+    if (dataSheetContainer.classList.contains('dataSheetOpened') === true && inSwitching === true) {
         createMapFor(ALat, ALng)
     }
 
@@ -98,7 +227,6 @@ function createADataSheet(name, ANumber, AWayname, ACity, APostalCode, ALat, ALn
 
 }
 
-//TODO : changer la fonction getEnseignes en mettant en async et await
 async function getEnseignes() {
     const response = await fetch('/api/enseignes');
     const companies = await response.json();
@@ -109,7 +237,9 @@ function renderEnseigne(enseigne, index) {
     const clone = templateEnseigne.content.cloneNode(true);
     let enseigneElement = clone.querySelector('.enseigne-coiffeur');
 
-    clone.querySelector('.enseigne-coiffeur').addEventListener('click', () => {
+    clone.querySelector('.enseigne-coiffeur').addEventListener('click', () =>
+        {
+
             let inSwitching = false;
             if ((document.querySelectorAll('.selected')).length === 1) {
                 inSwitching = true;
@@ -118,12 +248,15 @@ function renderEnseigne(enseigne, index) {
                 let closeButtun = document.getElementById('closeButton');
                 closeButtun.click();
                 enseigneElement.classList.remove('selected');
-            } else {
+            } else
+            {
                 let selectedElements = document.querySelectorAll('.selected');
                 selectedElements.forEach(element => element.classList.remove('selected'));
                 enseigneElement.classList.add('selected');
-                createADataSheet(enseigne.nom, enseigne.num ?? '', enseigne.voie, enseigne.ville, enseigne.codepostal, enseigne.lat, enseigne.lng, inSwitching);
+                createADataSheet(enseigneElement,enseigne, inSwitching);
             }
+
+
         }
     )
 
