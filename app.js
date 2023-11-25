@@ -30,7 +30,7 @@ app.get('/api/enseignes', (req, res) => {
     });
 });
 
-app.patch('/api/enseignes/:id', (req, res) => {
+app.patch('/api/enseignes', (req, res) => {
     const data = req.body;
     const id = data.id;
     const name = data.name;

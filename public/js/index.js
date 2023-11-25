@@ -84,7 +84,7 @@ function editHtmlElement(element, newData, modifLabel) {
 
 
 async function sendModifiedData(data) {
-    const response = await fetch('api/enseignes/${id}', {
+    const response = await fetch('api/enseignes', {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
@@ -153,10 +153,6 @@ function createADataSheet(enseigneElement, enseigne, inSwitching) {
         templateEditCoiffeur.content.getElementById('ville').value = ACity;
         templateEditCoiffeur.content.getElementById('latitude').value = ALat;
         templateEditCoiffeur.content.getElementById('longitude').value = ALng;
-
-
-
-
         let clone = templateEditCoiffeur.content.cloneNode(true);
         let modifLabel = clone.querySelector('#isModified');
         dataSheetContainer.appendChild(clone);
