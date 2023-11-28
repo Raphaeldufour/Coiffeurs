@@ -7,18 +7,13 @@ const app = express();
 app.use(express.static('public'));
 app.use(bodyParser.json());
 
-let email = '';
-let password = '';
-
 const db = new sqlite3.Database('database/database.db');
 
 async function getLoginAndPassword() {
     const fileContent = await fsp.readFile('user.json', 'utf-8');
     const data = JSON.parse(fileContent);
-    email = data.utilisateur.email;
-    password = data.utilisateur.password;
+    return {email: data.utilisateur.email, password: data.utilisateur.password};
 }
-getLoginAndPassword();
 
 app.get('/api/enseignes', (req, res) => {
     db.all('SELECT * FROM enseignes ORDER BY nom', (err, enseignes) => {
@@ -42,20 +37,20 @@ app.patch('/api/enseignes', (req, res) => {
     const codepostal = data.codepostal;
 
     db.run('UPDATE enseignes SET nom = ?, lat = ?, lng = ?, num = ?, voie = ?, ville = ?, codepostal = ? WHERE id = ?', [name, lat, lng, num, voie, ville, codepostal, id], (err) => {
-        if (err)
-        {
+        if (err) {
             res.status(500).send('Erreur lors de la modification de l\'enseigne');
         } else {
             res.json({message: 'Enseigne modifiée avec succès'});
         }
-    } );
+    });
 
 });
 
 
-app.post('/user', (req, res) => {
+app.post('/user', async (req, res) => {
     const emailBody = req.body.email;
     const passwordBody = req.body.password;
+    const {email, password} = await getLoginAndPassword();
     if (emailBody === email && passwordBody === password) {
         res.json({message: 'Vous êtes connecté'});
     } else {

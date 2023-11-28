@@ -6,7 +6,6 @@ html,body{
 }
 #page-container {
     height: 100%;
-    width: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -191,11 +190,6 @@ nav{
 #closeButton.disappearing{
     animation: disappearing 0.5s forwards;
 }
-
-
-
-
-
 .closeButtonContainer{
     display: flex;
     justify-content: flex-end;
@@ -209,7 +203,7 @@ nav{
 }
 
 #isModified{
-    color: gray;
+    color: #808080FF;
     text-align: center;
     font-style: oblique;
     height: 0;
