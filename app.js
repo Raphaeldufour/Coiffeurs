@@ -1,19 +1,13 @@
 import express from 'express';
 import sqlite3 from 'sqlite3';
-import {promises as fsp} from 'fs';
 import bodyParser from 'body-parser';
+import bcrypt from "bcrypt";
 
 const app = express();
 app.use(express.static('public'));
 app.use(bodyParser.json());
 
 const db = new sqlite3.Database('database/database.db');
-
-async function getLoginAndPassword() {
-    const fileContent = await fsp.readFile('user.json', 'utf-8');
-    const data = JSON.parse(fileContent);
-    return {email: data.utilisateur.email, password: data.utilisateur.password};
-}
 
 app.get('/api/enseignes', (req, res) => {
     db.all('SELECT * FROM enseignes ORDER BY nom', (err, enseignes) => {
@@ -46,16 +40,23 @@ app.patch('/api/enseignes', (req, res) => {
 
 });
 
-
 app.post('/user', async (req, res) => {
     const emailBody = req.body.email;
     const passwordBody = req.body.password;
-    const {email, password} = await getLoginAndPassword();
-    if (emailBody === email && passwordBody === password) {
-        res.json({message: 'Vous êtes connecté'});
-    } else {
-        res.status(401).json({message: 'Identifiants incorrects'});
-    }
+    db.get('SELECT * FROM Utilisateurs WHERE email = ?', [emailBody], async (err, user) => {
+        if (err) {
+            res.status(500).send('Erreur lors de la récupération de l\'utilisateur');
+        } else if (user) {
+            const passwordCorrect = await bcrypt.compare(passwordBody, user.mot_de_passe_hache);
+            if (passwordCorrect) {
+                res.json({message: 'Connexion réussie'});
+            } else {
+                res.status(401).json({message: 'Mot de passe incorrect'});
+            }
+        } else {
+            res.status(401).json({message: 'Email incorrect'});
+        }
+    });
 });
 
 app.listen(3000, () => {

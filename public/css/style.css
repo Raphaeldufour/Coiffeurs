@@ -23,12 +23,6 @@ nav{
     font-size: 18px;
     font-weight: bold;
 }
-#login-icon, #logout-icon, #add-icon{
-    width: auto;
-    height: 20px;
-    margin: 0 10px;
-}
-
 #main{
     height: 90%;
     display: flex;
@@ -85,7 +79,11 @@ nav{
     color: #ebebeb;
 }
 
-#logout-icon:hover , #add-icon:hover{
+
+#buttons-container > *{
+    width: 24px;
+    height: 24px;
+    padding-right: 19px;
     cursor: pointer;
 }
 
@@ -216,6 +214,10 @@ nav{
 }
 #isModified.hideIsModified{
     height: 0;
+}
+
+.hidden{
+    display: none;
 }
 
 

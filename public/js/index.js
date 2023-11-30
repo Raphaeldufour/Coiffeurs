@@ -8,6 +8,9 @@ const mainContainer = document.getElementById('main');
 const leftContentContainer = document.getElementById('leftContentContainer');
 const dataSheetContainer = document.getElementById('rightContentContainer');
 const dataSheetViewTemplate = document.getElementById('template-view-dataSheet');
+const logoutButton = document.getElementById('logout-icon');
+const loginButton = document.getElementById('login-icon');
+const addButton = document.getElementById('add-icon');
 
 let indexPage = 10;
 let enseignes = [];
@@ -143,9 +146,7 @@ function createADataSheet(enseigneElement, enseigne, inSwitching) {
         dataSheetContainer.appendChild(dataSheetViewTemplate.content.cloneNode(true));
         let closeButtonContainer = document.querySelector('.closeButtonContainer');
         closeButtonContainer.appendChild(closeButton);
-    }
-    else
-    {
+    } else {
         templateEditCoiffeur.content.getElementById('nom').value = name;
         templateEditCoiffeur.content.getElementById('numero').value = ANumber;
         templateEditCoiffeur.content.getElementById('voie').value = AWayname;
@@ -233,8 +234,7 @@ function renderEnseigne(enseigne, index) {
     const clone = templateEnseigne.content.cloneNode(true);
     let enseigneElement = clone.querySelector('.enseigne-coiffeur');
 
-    clone.querySelector('.enseigne-coiffeur').addEventListener('click', () =>
-        {
+    clone.querySelector('.enseigne-coiffeur').addEventListener('click', () => {
 
             let inSwitching = false;
             if ((document.querySelectorAll('.selected')).length === 1) {
@@ -244,12 +244,11 @@ function renderEnseigne(enseigne, index) {
                 let closeButtun = document.getElementById('closeButton');
                 closeButtun.click();
                 enseigneElement.classList.remove('selected');
-            } else
-            {
+            } else {
                 let selectedElements = document.querySelectorAll('.selected');
                 selectedElements.forEach(element => element.classList.remove('selected'));
                 enseigneElement.classList.add('selected');
-                createADataSheet(enseigneElement,enseigne, inSwitching);
+                createADataSheet(enseigneElement, enseigne, inSwitching);
             }
 
 
@@ -311,43 +310,19 @@ function checkLogin() {
     console.log(isLogged);
 
     if (isLogged === 'true') {
-        let addPersonButton = document.createElement('span');
-        let imgAdd = document.createElement('img');
-        imgAdd.src = 'img/addperson.svg';
-        imgAdd.alt = 'add';
-        imgAdd.id = 'add-icon';
-
-        addPersonButton.appendChild(imgAdd);
-        logImgContainer.appendChild(addPersonButton);
-
-        let logoutButton = document.createElement('span');
-
+        loginButton.classList.add('hidden');
         logoutButton.addEventListener('click', () => {
                 sessionStorage.setItem('isLoggedIn', 'false');
                 window.location.reload();
             }
         );
-
-        let imgLogout = document.createElement('img');
-        imgLogout.src = 'img/logout.svg';
-        imgLogout.alt = 'logout';
-        imgLogout.id = 'logout-icon';
-
-        logoutButton.appendChild(imgLogout);
-
-        logImgContainer.appendChild(logoutButton);
     } else {
-        let loginButton = document.createElement('a');
-        loginButton.href = '/login.html';
-
-        let imgLoggin = document.createElement('img');
-        imgLoggin.src = 'img/login.svg';
-        imgLoggin.alt = 'login';
-        imgLoggin.id = 'login-icon';
-
-        loginButton.appendChild(imgLoggin);
-
-        logImgContainer.appendChild(loginButton);
+        logoutButton.classList.add('hidden');
+        addButton.classList.add('hidden');
+        loginButton.addEventListener('click', () => {
+            window.location.href = '/login.html';
+            }
+        );
     }
 }
 
