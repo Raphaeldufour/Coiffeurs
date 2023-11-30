@@ -22,8 +22,8 @@ async function hashPassword(password) {
 
 // Créer une table pour stocker les enseignes de coiffure
 db.serialize(async () => {
-    db.run(`
-CREATE TABLE IF NOT EXISTS enseignes (
+    db.run(` 
+ CREATE TABLE IF NOT EXISTS enseignes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nom VARCHAR(30),
     lat Decimal(8,6),

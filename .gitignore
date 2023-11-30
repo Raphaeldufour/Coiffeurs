@@ -133,3 +133,4 @@ dist
 package-lock.json
 
 .idea/
+/database/database.db

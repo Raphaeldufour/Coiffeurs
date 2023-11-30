@@ -275,6 +275,7 @@ function renderEnseignes(enseignes, startIndex, endIndex) {
 function loadMoreEnseignes(enseignes) {
     renderEnseignes(enseignes, indexPage - 10, indexPage);
     indexPage += 10;
+    nombreCoiffeurs.textContent = enseignes.length.toString();
 }
 
 function checkScroll() {
@@ -326,17 +327,13 @@ function checkLogin() {
     }
 }
 
-function init() {
+async function init() {
     checkLogin();
     containerEnseigne.scrollTop = 0;
-    getEnseignes()
-        .then(initialEnsignes => {
-            enseignes = initialEnsignes;
-            affichageEnseignes = enseignes;
-            renderEnseignes(affichageEnseignes, 0, indexPage);
-            indexPage += 10;
-            nombreCoiffeurs.textContent = enseignes.length.toString();
-        });
+    enseignes = await getEnseignes();
+    affichageEnseignes = enseignes;
+    loadMoreEnseignes(affichageEnseignes);
+
     leftContentContainer.addEventListener('scroll', checkScroll);
     inputRecherche.addEventListener('input', filterEnseignes);
 }
