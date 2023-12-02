@@ -45,38 +45,6 @@ function createMapFor(Lat, Lng) {
 }
 
 
-function okayForEdit(ancientInfos, newInfos) {
-    isOkay = true;
-    if (
-        isNaN(newInfos[1]) || newInfos[1].includes(' ') || newInfos[1] === '' ||
-        isNaN(newInfos[3]) || newInfos[3].includes(' ') || newInfos[3] === '' ||
-        isNaN(newInfos[5]) || newInfos[5].includes(' ') || newInfos[5] === '' || Math.abs(parseFloat(newInfos[5])) > 90 ||
-        isNaN(newInfos[6]) || newInfos[6].includes(' ') || newInfos[6] === '' || Math.abs(parseFloat(newInfos[6])) > 180
-    ) {
-        isOkay = false;
-    } else if (
-        dontContainsLetters(newInfos[0]) ||
-        dontContainsLetters(newInfos[2]) ||
-        dontContainsLetters(newInfos[4]) || containsDigits(newInfos[4])
-    ) {
-        isOkay = false;
-    }
-    else if(ancientInfos!==null)
-    {
-        for (let i = 0; i < newInfos.length; i++) {
-            if (newInfos[i].toString() !== ancientInfos[i].toString()) {
-                isOkay = true
-                console.log('changements');
-                break
-
-            } else {
-                isOkay = false;
-                console.log('pas changement');
-            }
-        }
-    }
-    return isOkay;
-}
 
 
 function closeDataSheet() {
@@ -162,9 +130,8 @@ function fillEditDataSheet(infos, typeOfDataSheet) {
 }
 
 
-function generateRightContent(enseigne, typeOfDataSheet)
-{
-    let currentInfos = null;
+function generateRightContent(enseigne, typeOfDataSheet) {
+    let currentInfos = [];
     let id = null;
     let mapLat = null;
     let mapLng = null;
@@ -192,23 +159,35 @@ function generateRightContent(enseigne, typeOfDataSheet)
         fillEditDataSheet(currentInfos, typeOfDataSheet)
         editButton.onclick = () => {
             let newInfos = [dataSheetEditContainer.querySelector('#nom').value, dataSheetEditContainer.querySelector('#numero').value, dataSheetEditContainer.querySelector('#voie').value, dataSheetEditContainer.querySelector('#code-postal').value, dataSheetEditContainer.querySelector('#ville').value, dataSheetEditContainer.querySelector('#latitude').value, dataSheetEditContainer.querySelector('#longitude').value];
-            if (okayForEdit(currentInfos, newInfos) === true) {
                 const data =
                     {
                         id: id,
-                        name: newInfos[0],
-                        num: newInfos[1],
-                        voie: newInfos[2],
-                        codepostal: newInfos[3],
-                        ville: newInfos[4],
-                        lat: newInfos[5],
-                        lng: newInfos[6]
+                        ancientInfos:{
+                            nom: currentInfos[0],
+                            num: currentInfos[1],
+                            voie: currentInfos[2],
+                            codepostal: currentInfos[3],
+                            ville: currentInfos[4],
+                            lat: currentInfos[5],
+                            lng: currentInfos[6]
+                        },
+
+                        newInfos:{
+                            nom: newInfos[0],
+                            num: newInfos[1],
+                            voie: newInfos[2],
+                            codepostal: newInfos[3],
+                            ville: newInfos[4],
+                            lat: newInfos[5],
+                            lng: newInfos[6]
+                        }
+
                     }
                 const resp = sendModifiedData(data, typeOfDataSheet);
                 resp.then(response => {
                     if (response.ok) {
-                        if(typeOfDataSheet === 'edit')
-                        {
+                        if (typeOfDataSheet === 'edit') {
+
                             enseigne.nom = newInfos[0];
                             enseigne.num = newInfos[1];
                             enseigne.voie = newInfos[2];
@@ -216,6 +195,8 @@ function generateRightContent(enseigne, typeOfDataSheet)
                             enseigne.ville = newInfos[4];
                             enseigne.lat = newInfos[5];
                             enseigne.lng = newInfos[6];
+
+
                             mapLat = newInfos[5];
                             mapLng = newInfos[6];
                             currentInfos = newInfos;
@@ -229,16 +210,15 @@ function generateRightContent(enseigne, typeOfDataSheet)
                             });
                         }
 
-                    } else {
-                        const error = response.json();
-                        alert(error.message);
+                    }
+                    else
+                    {
+                        const error = response.json()
+                        error.then(data => {
+                            alert(data.message)
+                        })
                     }
                 });
-
-            } else {
-                alert("Problème: certains champs n'ont pas été remplis correctement")
-            }
-
         }
     }
     if (currentDataSheetContainer.classList.contains('dataSheetOpened') === true && inRealSwitching === true && enseigne !== null) {
@@ -350,8 +330,6 @@ function filterEnseignes() {
 
 function checkLogin() {
     let isLogged = sessionStorage.getItem('isLoggedIn');
-    console.log(isLogged);
-
     if (isLogged === 'true') {
         loginButton.classList.add('hidden');
         logoutButton.addEventListener('click', () => {
@@ -359,12 +337,10 @@ function checkLogin() {
                 window.location.reload();
             }
         );
-
         addButton.addEventListener('click', () => {
             document.querySelector('.selected')?.classList.remove('selected');
             generateRightContent(null, 'add');
         });
-
     } else {
         logoutButton.classList.add('hidden');
         addButton.classList.add('hidden');

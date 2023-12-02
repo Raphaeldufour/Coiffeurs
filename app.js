@@ -9,6 +9,45 @@ app.use(bodyParser.json());
 
 const db = new sqlite3.Database('database/database.db');
 
+
+
+function dontContainsLetters(str) {
+    return !/[a-zA-Z]/.test(str);
+}
+
+function containsDigits(string) {
+    return /\d/.test(string);
+}
+
+function okayForEdit(ancientInfos , newInfos) {
+    let isOkay = true;
+    if (
+        isNaN(newInfos[1]) || newInfos[1].includes(' ') || newInfos[1] === '' ||
+        isNaN(newInfos[3]) || newInfos[3].includes(' ') || newInfos[3] === '' ||
+        isNaN(newInfos[5]) || newInfos[5].includes(' ') || newInfos[5] === '' || Math.abs(parseFloat(newInfos[5])) > 90 ||
+        isNaN(newInfos[6]) || newInfos[6].includes(' ') || newInfos[6] === '' || Math.abs(parseFloat(newInfos[6])) > 180
+    ) {
+        isOkay = false;
+    } else if (
+        dontContainsLetters(newInfos[0]) ||
+        dontContainsLetters(newInfos[2]) ||
+        dontContainsLetters(newInfos[4]) || containsDigits(newInfos[4])
+    ) {
+        isOkay = false;
+    } else if (ancientInfos !== null) {
+        for (let i = 0; i < newInfos.length; i++) {
+            if (newInfos[i].toString() !== ancientInfos[i].toString()) {
+                isOkay = true
+                break;
+            } else {
+                isOkay = false;
+            }
+        }
+    }
+    return isOkay;
+}
+
+
 app.get('/api/enseignes', (req, res) => {
     db.all('SELECT * FROM enseignes ORDER BY nom', (err, enseignes) => {
         if (err) {
@@ -22,47 +61,62 @@ app.get('/api/enseignes', (req, res) => {
 app.patch('/api/enseignes', (req, res) => {
     const data = req.body;
     const id = data.id;
-    const name = data.name;
-    const lat = data.lat;
-    const lng = data.lng;
-    const num = data.num;
-    const voie = data.voie;
-    const ville = data.ville;
-    const codepostal = data.codepostal;
+    const ancientInfos = [data.ancientInfos.nom, data.ancientInfos.num, data.ancientInfos.voie, data.ancientInfos.codepostal, data.ancientInfos.ville, data.ancientInfos.lat, data.ancientInfos.lng];
+    const newInfos = [data.newInfos.nom, data.newInfos.num, data.newInfos.voie, data.newInfos.codepostal, data.newInfos.ville, data.newInfos.lat, data.newInfos.lng];
 
-    db.run('UPDATE enseignes SET nom = ?, lat = ?, lng = ?, num = ?, voie = ?, ville = ?, codepostal = ? WHERE id = ?', [name, lat, lng, num, voie, ville, codepostal, id], (err) => {
-        if (err) {
-            res.status(500).send('Erreur lors de la modification de l\'enseigne');
-        } else {
+    if (okayForEdit(ancientInfos, newInfos)) {
 
-            res.json({message: 'Enseigne modifiée avec succès'});
-        }
-    });
+        const name = newInfos[0];
+        const num = newInfos[1];
+        const voie = newInfos[2];
+        const codepostal = newInfos[3];
+        const ville = newInfos[4];
+        const lat = newInfos[5];
+        const lng = newInfos[6];
 
+        db.run('UPDATE enseignes SET nom = ?, lat = ?, lng = ?, num = ?, voie = ?, ville = ?, codepostal = ? WHERE id = ?', [name, lat, lng, num, voie, ville, codepostal, id], (err) => {
+            if (err) {
+                res.status(500).json({message:'Erreur lors de la modification de l\'enseigne'});
+            } else {
+
+                res.json({message: 'Enseigne modifiée avec succès'});
+            }
+        });
+    }
+    else
+    {
+        res.status(500).json({message:'Erreur : certains champs n\'ont pas été remplis ou sont incorrects'});
+    }
 });
 
 
 app.put('/api/enseignes', (req, res) =>
 {
     const data = req.body;
-    console.log ('donnees recues : ' + data);
-    const name = data.name;
-    const num = data.num;
-    const voie = data.voie;
-    const ville = data.ville;
-    const codepostal = data.codepostal;
-    const lat = data.lat;
-    const lng = data.lng;
 
-    db.run('INSERT INTO enseignes (nom, lat, lng, num, voie, ville, codepostal) VALUES (?, ?, ?, ?, ?, ?, ?)', [name, lat, lng, num, voie, ville, codepostal], (err) => {
-        if (err) {
-            res.status(500).send('Erreur lors de la création de l\'enseigne');
-        } else
-        {
-            res.json({message: 'Enseigne créée avec succès'});
-        }
-    });
+    const newInfos = [data.newInfos.nom, data.newInfos.num, data.newInfos.voie, data.newInfos.codepostal, data.newInfos.ville, data.newInfos.lat, data.newInfos.lng];
 
+    if(okayForEdit(null,newInfos))
+    {
+        const name = newInfos[0];
+        const num = newInfos[1];
+        const voie = newInfos[2];
+        const codepostal = newInfos[3];
+        const ville = newInfos[4];
+        const lat = newInfos[5];
+        const lng = newInfos[6];
+
+        db.run('INSERT INTO enseignes (nom, lat, lng, num, voie, ville, codepostal) VALUES (?, ?, ?, ?, ?, ?, ?)', [name, lat, lng, num, voie, ville, codepostal], (err) => {
+            if (err) {
+                res.status(500).json({message:'Erreur lors de la création de l\'enseigne'});
+            } else {
+                res.json({message: 'Enseigne créée avec succès'});
+            }
+        });
+    }else
+    {
+        res.status(500).json({message:'Erreur : certains champs n\'ont pas été remplis ou sont incorrects'});
+    }
 });
 
 
