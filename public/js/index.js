@@ -1,16 +1,21 @@
 const templateEnseigne = document.getElementById('template-enseigne');
-const templateEditCoiffeur = document.getElementById('template-edit-coiffeur');
 const containerEnseigne = document.getElementById('container-enseigne');
 const nombreCoiffeurs = document.getElementById('nombre-coiffeur');
 const inputRecherche = document.getElementById('input-recherche');
 const logImgContainer = document.getElementById('logImgContainer');
 const mainContainer = document.getElementById('main');
 const leftContentContainer = document.getElementById('leftContentContainer');
-const dataSheetContainer = document.getElementById('rightContentContainer');
-const dataSheetViewTemplate = document.getElementById('template-view-dataSheet');
+const dataSheetViewContainer = document.querySelector('.viewDataSheetContainer');
+const dataSheetEditContainer = document.querySelector('.edit-company-container');
 const logoutButton = document.getElementById('logout-icon');
 const loginButton = document.getElementById('login-icon');
 const addButton = document.getElementById('add-icon');
+
+const currentDataSheetContainer = (sessionStorage.getItem('isLoggedIn') !== 'true') ? dataSheetViewContainer : dataSheetEditContainer;
+const mapContainer = currentDataSheetContainer.querySelector('.mapContainer');
+const editButton = currentDataSheetContainer.querySelector('#edit-coiffeur-submit');
+const closeButton = currentDataSheetContainer.querySelector('.closeButton');
+const modifLabel = currentDataSheetContainer.querySelector('#isModified');
 
 let indexPage = 10;
 let enseignes = [];
@@ -28,7 +33,7 @@ function containsDigits(string) {
 function createMapFor(Lat, Lng) {
     mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
     const map = new mapboxgl.Map({
-        container: document.querySelector('.mapContainer'), // container
+        container: mapContainer, // container
         style: 'mapbox://styles/mapbox/satellite-streets-v12',// style URL
         center: [Lng, Lat],
         zoom: 18,
@@ -55,11 +60,11 @@ function okayForEdit(ancientInfos, newInfos) {
         dontContainsLetters(newInfos[4]) || containsDigits(newInfos[4])
     ) {
         isOkay = false;
-    } else {
-        console.log(parseFloat(dataSheetContainer.querySelector('#latitude').value))
-        console.log(parseFloat(dataSheetContainer.querySelector('#longitude').value))
+    }
+    else if(ancientInfos!==null)
+    {
         for (let i = 0; i < newInfos.length; i++) {
-            if (newInfos[i] !== ancientInfos[i]) {
+            if (newInfos[i].toString() !== ancientInfos[i].toString()) {
                 isOkay = true
                 console.log('changements');
                 break
@@ -74,124 +79,156 @@ function okayForEdit(ancientInfos, newInfos) {
 }
 
 
-function editHtmlElement(element, newData, modifLabel) {
-    element.querySelector('.enseigne-coiffeur-nom').textContent = newData[0];
-    element.querySelector('.enseigne-coiffeur-rue').textContent = newData[1] + ' ' + newData[2];
-    element.querySelector('.enseigne-coiffeur-ville').textContent = newData[3] + ' ' + newData[4];
-    modifLabel.classList.add('showIsModified'); // Ajoute la classe pour montrer lentement le message
+function closeDataSheet() {
+    closeButton.classList.remove('stay');
+    closeButton.classList.remove('appearing');
+    closeButton.classList.add('disappearing');
 
-    setTimeout(() => {
-        modifLabel.classList.remove('showIsModified'); // Enlève la classe pour cacher lentement le message
-    }, 2000);
+    currentDataSheetContainer.classList.remove('dataSheetOpened');
+
+    currentDataSheetContainer.addEventListener('transitionend', (event) => {
+        mapContainer.innerHTML = '';
+    });
+
+    let selectedElements = document.querySelectorAll('.selected');
+    selectedElements.forEach(element => element.classList.remove('selected'));
 }
 
 
-async function sendModifiedData(data) {
+function editHtmlElement(newData, typeOfDataSheet) {
+    if (typeOfDataSheet === 'edit') {
+        let element = document.querySelector('.selected');
+        element.querySelector('.enseigne-coiffeur-nom').textContent = newData[0];
+        element.querySelector('.enseigne-coiffeur-rue').textContent = newData[1] + ' ' + newData[2];
+        element.querySelector('.enseigne-coiffeur-ville').textContent = newData[3] + ' ' + newData[4];
+        modifLabel.classList.add('showIsModified'); // Ajoute la classe pour montrer lentement le message
+
+        setTimeout(() => {
+            modifLabel.classList.remove('showIsModified'); // Enlève la classe pour cacher lentement le message
+        }, 2000);
+    }
+}
+
+
+async function sendModifiedData(data, typeOfDataSheet) {
+    let method = '';
+    console.log(typeOfDataSheet);
+    switch (typeOfDataSheet) {
+        case 'edit':
+            method = 'PATCH';
+            break;
+        case 'add':
+            method = 'PUT';
+            break;
+    }
+
     const response = await fetch('api/enseignes', {
-        method: 'PATCH',
+        method: method,
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     })
-
-    return response
+    return response;
 }
 
 
-function createADataSheet(enseigneElement, enseigne, inSwitching) {
-    let currentInfos = [enseigne.nom, enseigne.num, enseigne.voie, enseigne.codepostal, enseigne.ville, enseigne.lat, enseigne.lng];
-    id = enseigne.id;
-    console.log(id);
-    let name = enseigne.nom;
-    let ANumber = enseigne.num;
-    let AWayname = enseigne.voie;
-    let APostalCode = enseigne.codepostal;
-    let ACity = enseigne.ville;
-    let ALat = enseigne.lat;
-    let ALng = enseigne.lng;
+function fillViewDataSheet(infos) {
+    currentDataSheetContainer.querySelector('#valueName').textContent = infos[0];
+    currentDataSheetContainer.querySelector('#valueNumber').textContent = infos[1];
+    currentDataSheetContainer.querySelector('#valueWay').textContent = infos[2];
+    currentDataSheetContainer.querySelector('#valuePostalCode').textContent = infos[3];
+    currentDataSheetContainer.querySelector('#valueCity').textContent = infos[4];
+}
+
+function fillEditDataSheet(infos, typeOfDataSheet) {
+    if (typeOfDataSheet === 'edit') {
+        currentDataSheetContainer.querySelector('#nom').value = infos[0];
+        currentDataSheetContainer.querySelector('#numero').value = infos[1];
+        currentDataSheetContainer.querySelector('#voie').value = infos[2];
+        currentDataSheetContainer.querySelector('#code-postal').value = infos[3];
+        currentDataSheetContainer.querySelector('#ville').value = infos[4];
+        currentDataSheetContainer.querySelector('#latitude').value = infos[5];
+        currentDataSheetContainer.querySelector('#longitude').value = infos[6];
+    } else if (typeOfDataSheet === 'add') {
+        currentDataSheetContainer.querySelector('#nom').value = '';
+        currentDataSheetContainer.querySelector('#numero').value = '';
+        currentDataSheetContainer.querySelector('#voie').value = '';
+        currentDataSheetContainer.querySelector('#code-postal').value = '';
+        currentDataSheetContainer.querySelector('#ville').value = '';
+        currentDataSheetContainer.querySelector('#latitude').value = '';
+        currentDataSheetContainer.querySelector('#longitude').value = '';
+    }
+}
 
 
-    dataSheetContainer.innerText = '';
-    dataSheetContainer.classList.add('dataSheetOpened');
-
-    let closeButton = document.createElement('button');
-    console.log(inSwitching);
-
-    closeButton.id = 'closeButton';
-    if (inSwitching === true) {
-        closeButton.classList.remove('appearing')
-        closeButton.classList.remove('disappearing')
+function generateRightContent(enseigne, typeOfDataSheet)
+{
+    let currentInfos = null;
+    let id = null;
+    let mapLat = null;
+    let mapLng = null;
+    let inRealSwitching = getSwitchingState();
+    if (enseigne !== null) {
+        currentInfos = [enseigne.nom, enseigne.num, enseigne.voie, enseigne.codepostal, enseigne.ville, enseigne.lat, enseigne.lng];
+        id = enseigne.id;
+        mapLat = currentInfos[5];
+        mapLng = currentInfos[6];
+    }
+    closeButton.classList.remove('disappearing');
+    if (inRealSwitching === true) {
+        closeButton.classList.remove('appearing');
+        closeButton.classList.add('stay');
     } else {
         closeButton.classList.add('appearing');
     }
-    closeButton.textContent = 'X';
 
     closeButton.addEventListener('click', (e) => {
-        dataSheetContainer.classList.remove('dataSheetOpened');
-        closeButton.classList.remove('appearing');
-        closeButton.classList.add('disappearing');
-        dataSheetContainer.classList.remove('dataSheetOpened');
-
-        let selectedElements = document.querySelectorAll('.selected');
-        selectedElements.forEach(element => element.classList.remove('selected'));
+        closeDataSheet();
     });
-    if (sessionStorage.getItem('isLoggedIn') !== 'true') {
-        dataSheetViewTemplate.content.querySelector('#valueName').textContent = name;
-        dataSheetViewTemplate.content.querySelector('#valueNumber').textContent = ANumber;
-        dataSheetViewTemplate.content.querySelector('#valueWay').textContent = AWayname;
-        dataSheetViewTemplate.content.querySelector('#valuePostalCode').textContent = APostalCode;
-        dataSheetViewTemplate.content.querySelector('#valueCity').textContent = ACity;
-
-        dataSheetContainer.appendChild(dataSheetViewTemplate.content.cloneNode(true));
-        let closeButtonContainer = document.querySelector('.closeButtonContainer');
-        closeButtonContainer.appendChild(closeButton);
+    if (typeOfDataSheet === 'view') {
+        fillViewDataSheet(currentInfos)
     } else {
-        templateEditCoiffeur.content.getElementById('nom').value = name;
-        templateEditCoiffeur.content.getElementById('numero').value = ANumber;
-        templateEditCoiffeur.content.getElementById('voie').value = AWayname;
-        templateEditCoiffeur.content.getElementById('code-postal').value = APostalCode;
-        templateEditCoiffeur.content.getElementById('ville').value = ACity;
-        templateEditCoiffeur.content.getElementById('latitude').value = ALat;
-        templateEditCoiffeur.content.getElementById('longitude').value = ALng;
-        let clone = templateEditCoiffeur.content.cloneNode(true);
-        let modifLabel = clone.querySelector('#isModified');
-        dataSheetContainer.appendChild(clone);
-
-        let closeButtonContainer = document.querySelector('.closeButtonContainer');
-        closeButtonContainer.appendChild(closeButton);
-
-        let editButton = document.getElementById('edit-coiffeur-submit');
-
-        editButton.addEventListener('click', () => {
-            let newInfos = [dataSheetContainer.querySelector('#nom').value, dataSheetContainer.querySelector('#numero').value, dataSheetContainer.querySelector('#voie').value, dataSheetContainer.querySelector('#code-postal').value, dataSheetContainer.querySelector('#ville').value, dataSheetContainer.querySelector('#latitude').value, dataSheetContainer.querySelector('#longitude').value];
-
+        fillEditDataSheet(currentInfos, typeOfDataSheet)
+        editButton.onclick = () => {
+            let newInfos = [dataSheetEditContainer.querySelector('#nom').value, dataSheetEditContainer.querySelector('#numero').value, dataSheetEditContainer.querySelector('#voie').value, dataSheetEditContainer.querySelector('#code-postal').value, dataSheetEditContainer.querySelector('#ville').value, dataSheetEditContainer.querySelector('#latitude').value, dataSheetEditContainer.querySelector('#longitude').value];
             if (okayForEdit(currentInfos, newInfos) === true) {
-                const data = {
-                    id: id,
-                    name: newInfos[0],
-                    num: newInfos[1],
-                    voie: newInfos[2],
-                    codepostal: newInfos[3],
-                    ville: newInfos[4],
-                    lat: newInfos[5],
-                    lng: newInfos[6]
-                }
-                const resp = sendModifiedData(data);
+                const data =
+                    {
+                        id: id,
+                        name: newInfos[0],
+                        num: newInfos[1],
+                        voie: newInfos[2],
+                        codepostal: newInfos[3],
+                        ville: newInfos[4],
+                        lat: newInfos[5],
+                        lng: newInfos[6]
+                    }
+                const resp = sendModifiedData(data, typeOfDataSheet);
                 resp.then(response => {
                     if (response.ok) {
-                        enseigne.nom = newInfos[0];
-                        enseigne.num = newInfos[1];
-                        enseigne.voie = newInfos[2];
-                        enseigne.codepostal = newInfos[3];
-                        enseigne.ville = newInfos[4];
-                        enseigne.lat = newInfos[5];
-                        enseigne.lng = newInfos[6];
-                        currentInfos = newInfos;
-                        ALat = newInfos[5];
-                        ALng = newInfos[6];
-                        currentInfos = newInfos;
-                        editHtmlElement(enseigneElement, newInfos, modifLabel)
+                        if(typeOfDataSheet === 'edit')
+                        {
+                            enseigne.nom = newInfos[0];
+                            enseigne.num = newInfos[1];
+                            enseigne.voie = newInfos[2];
+                            enseigne.codepostal = newInfos[3];
+                            enseigne.ville = newInfos[4];
+                            enseigne.lat = newInfos[5];
+                            enseigne.lng = newInfos[6];
+                            mapLat = newInfos[5];
+                            mapLng = newInfos[6];
+                            currentInfos = newInfos;
+                            editHtmlElement(newInfos, typeOfDataSheet)
+                        }
+                        else if (typeOfDataSheet === 'add')
+                        {
+                            response.json().then(data => {
+                                alert(data.message)
+                                window.location.reload();
+                            });
+                        }
+
                     } else {
                         const error = response.json();
                         alert(error.message);
@@ -202,25 +239,21 @@ function createADataSheet(enseigneElement, enseigne, inSwitching) {
                 alert("Problème: certains champs n'ont pas été remplis correctement")
             }
 
-        });
-
+        }
     }
-
-
-    if (dataSheetContainer.classList.contains('dataSheetOpened') === true && inSwitching === true) {
-        createMapFor(ALat, ALng)
+    if (currentDataSheetContainer.classList.contains('dataSheetOpened') === true && inRealSwitching === true && enseigne !== null) {
+        createMapFor(mapLat, mapLng)
+    } else {
+        mapContainer.innerHTML = ''
     }
-
-    dataSheetContainer.addEventListener('transitionend', (event) => {
-        if (dataSheetContainer.classList.contains('dataSheetOpened') === false) {
-            dataSheetContainer.innerText = '';
+    currentDataSheetContainer.addEventListener('transitionend', (event) => {
+        if (currentDataSheetContainer.classList.contains('dataSheetOpened') === true && enseigne !== null) {
+            createMapFor(mapLat, mapLng)
         } else {
-            dataSheetContainer.classList.add('dataSheetOpened');
-            console.log('je suis passé dans l event listener');
-
-            createMapFor(ALat, ALng)
+            mapContainer.innerHTML = ''
         }
     });
+    currentDataSheetContainer.classList.add('dataSheetOpened');
 
 }
 
@@ -230,25 +263,34 @@ async function getEnseignes() {
     return companies;
 }
 
+function getSwitchingState() {
+    let inSwitching = false;
+    if (currentDataSheetContainer.classList.contains('dataSheetOpened') === true) {
+        inSwitching = true;
+    }
+    return inSwitching;
+}
+
 function renderEnseigne(enseigne, index) {
     const clone = templateEnseigne.content.cloneNode(true);
-    let enseigneElement = clone.querySelector('.enseigne-coiffeur');
-
+    const enseigneElement = clone.querySelector('.enseigne-coiffeur');
+    let typeOfDataSheet = '';
     clone.querySelector('.enseigne-coiffeur').addEventListener('click', () => {
-
-            let inSwitching = false;
-            if ((document.querySelectorAll('.selected')).length === 1) {
-                inSwitching = true;
+            if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+                typeOfDataSheet = 'view';
+            } else {
+                typeOfDataSheet = 'edit';
             }
+
             if (enseigneElement.classList.contains('selected')) {
-                let closeButtun = document.getElementById('closeButton');
-                closeButtun.click();
+                console.log('lelement courant est déjà sélectionné')
+                closeDataSheet();
                 enseigneElement.classList.remove('selected');
             } else {
                 let selectedElements = document.querySelectorAll('.selected');
                 selectedElements.forEach(element => element.classList.remove('selected'));
                 enseigneElement.classList.add('selected');
-                createADataSheet(enseigneElement, enseigne, inSwitching);
+                generateRightContent(enseigne, typeOfDataSheet)
             }
 
 
@@ -317,11 +359,17 @@ function checkLogin() {
                 window.location.reload();
             }
         );
+
+        addButton.addEventListener('click', () => {
+            document.querySelector('.selected')?.classList.remove('selected');
+            generateRightContent(null, 'add');
+        });
+
     } else {
         logoutButton.classList.add('hidden');
         addButton.classList.add('hidden');
         loginButton.addEventListener('click', () => {
-            window.location.href = '/login.html';
+                window.location.href = '/login.html';
             }
         );
     }

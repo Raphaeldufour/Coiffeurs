@@ -34,11 +34,37 @@ app.patch('/api/enseignes', (req, res) => {
         if (err) {
             res.status(500).send('Erreur lors de la modification de l\'enseigne');
         } else {
+
             res.json({message: 'Enseigne modifiée avec succès'});
         }
     });
 
 });
+
+
+app.put('/api/enseignes', (req, res) =>
+{
+    const data = req.body;
+    console.log ('donnees recues : ' + data);
+    const name = data.name;
+    const num = data.num;
+    const voie = data.voie;
+    const ville = data.ville;
+    const codepostal = data.codepostal;
+    const lat = data.lat;
+    const lng = data.lng;
+
+    db.run('INSERT INTO enseignes (nom, lat, lng, num, voie, ville, codepostal) VALUES (?, ?, ?, ?, ?, ?, ?)', [name, lat, lng, num, voie, ville, codepostal], (err) => {
+        if (err) {
+            res.status(500).send('Erreur lors de la création de l\'enseigne');
+        } else
+        {
+            res.json({message: 'Enseigne créée avec succès'});
+        }
+    });
+
+});
+
 
 app.post('/user', async (req, res) => {
     const emailBody = req.body.email;

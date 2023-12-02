@@ -87,14 +87,21 @@ nav{
     cursor: pointer;
 }
 
-#rightContentContainer{
+
+
+.viewDataSheetContainer,.edit-company-container{
+    display: table-column;
+    overflow: auto;
+    width: 0;
+    transition: width 1s ease;
+}
+
+.viewDataSheetContainer.dataSheetOpened, .edit-company-container.dataSheetOpened{
     background-color: #f1f1f1;
     display: table-column;
     overflow: auto;
-    transition: width 1s ease;
-    width: 0;
+    width: 100%;
 }
-
 
 
 #container-enseigne{
@@ -118,9 +125,7 @@ nav{
     margin-bottom: 5%;
 }
 
-#rightContentContainer.dataSheetOpened {
-    width: 100%;
-}
+
 
 
 .mapContainer{
@@ -159,7 +164,7 @@ nav{
 }
 
 
-#closeButton
+.closeButton
 {
     color : #ffffff;
     background-color: #a73987;
@@ -170,22 +175,27 @@ nav{
     height: 30px;
     margin-right: 2%;
     border: none;
-
-    position: absolute;
-    top: 7%;
-
 }
 
-#closeButton:hover
+.closeButton:hover
 {
     cursor: pointer;
 }
 
-#closeButton.appearing{
+.closeButton.stay{
+    position: absolute;
+    top: 7%;
+}
+
+.closeButton.appearing{
+    position: absolute;
+    top: 7%;
     animation: appearing 0.5s forwards;
 }
 
-#closeButton.disappearing{
+.closeButton.disappearing{
+    position: absolute;
+    top: 7%;
     animation: disappearing 0.5s forwards;
 }
 .closeButtonContainer{
