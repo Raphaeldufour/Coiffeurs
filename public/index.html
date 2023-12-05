@@ -9,16 +9,16 @@
     <script src="js/index.js" defer></script>
 </head>
 <body>
-<div id="page-container">
-    <nav id="topBannier">
-        <p id="nav-title">Coiff'EUR</p>
-        <div id="buttons-container">
-            <img id="add-icon" src="img/addperson.svg" alt="add">
-            <img id="logout-icon" src="img/logout.svg" alt="edit">
-            <img id="login-icon" src="img/login.svg" alt="edit">
+<div class="page-container">
+    <nav>
+        <p class="nav-title">Coiff'EUR</p>
+        <div class="buttons-container">
+            <img id="add-icon" class="nav-icon" src="img/addperson.svg" alt="add">
+            <img id="logout-icon" class="nav-icon" src="img/logout.svg" alt="edit">
+            <img id="login-icon" class="nav-icon" src="img/login.svg" alt="edit">
         </div>
     </nav>
-    <div id="main">
+    <main>
         <div id="leftContentContainer">
             <div id="search-container">
                 <input type="text" id="input-recherche" placeholder="Rechercher...">
@@ -26,9 +26,8 @@
             </div>
             <div id="container-enseigne">
             </div>
+            <div id="load-more-button">Charger plus...</div>
         </div>
-
-
         <div class='viewDataSheetContainer'>
             <div class="closeButtonContainer">
                 <button class="closeButton">X</button>
@@ -36,7 +35,7 @@
             <table id='dataSheetTable'>
                 <tr id="rowName">
                     <td class="labelCell">Nom</td>
-                    <td id="valueName" ></td>
+                    <td id="valueName"></td>
                 </tr>
                 <tr>
                     <td class="labelCell">Numéro</td>
@@ -57,10 +56,7 @@
             </table>
             <div class="mapContainer">
             </div>
-
         </div>
-
-
         <div class="edit-company-container">
             <div class="closeButtonContainer">
                 <button class="closeButton">X</button>
@@ -87,7 +83,7 @@
             </div>
 
         </div>
-    </div>
+    </main>
 </div>
 
 

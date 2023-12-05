@@ -300,17 +300,23 @@ function loadMoreEnseignes(enseignes) {
     nombreCoiffeurs.textContent = enseignes.length.toString();
 }
 
-function checkScroll() {
 
-    const container = document.getElementById('leftContentContainer');
-    const scrollableHeight = container.scrollHeight - container.clientHeight;
-    const scrollTop = container.scrollTop;
+function checkObserver() {
+    const options = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 1.0
+    };
 
-    // La marge est à 20 pixels pour déclencher le chargement lorsque la barre est proche du bas
-    if (scrollableHeight - scrollTop <= 20) {
-        loadMoreEnseignes(affichageEnseignes);
-    }
+    const observer = new IntersectionObserver(function (entries, observer) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                loadMoreEnseignes(affichageEnseignes);
+            }
+        });
+    }, options);
 
+    observer.observe(document.getElementById('load-more-button'));
 }
 
 function filterEnseignes() {
@@ -358,7 +364,7 @@ async function init() {
     affichageEnseignes = enseignes;
     loadMoreEnseignes(affichageEnseignes);
 
-    leftContentContainer.addEventListener('scroll', checkScroll);
+    checkObserver();
     inputRecherche.addEventListener('input', filterEnseignes);
 }
 

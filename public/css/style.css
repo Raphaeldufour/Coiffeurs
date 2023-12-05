@@ -1,16 +1,17 @@
-html,body{
+html, body {
     height: 100%;
     overflow-y: hidden;
     margin: 0;
     font-family: 'Roboto', sans-serif;
 }
-#page-container {
+
+.page-container {
     height: 100%;
     display: flex;
     flex-direction: column;
 }
 
-nav{
+nav {
     height: 10%;
     display: flex;
     justify-content: space-between;
@@ -19,48 +20,61 @@ nav{
     background-color: #000000;
     color: #ffffff;
 }
-#nav-title{
+
+.nav-title {
     font-size: 18px;
     font-weight: bold;
 }
-#main{
+
+main {
     height: 90%;
     display: flex;
     flex-direction: row;
-
-
 }
 
+#load-more-button {
+    align-self: center;
+    text-align: center;
+    width: 131px;
+    padding: 13px;
+    border: none;
+    border-radius: 30px;
+    background-color: #a73987;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
 
-
-#leftContentContainer{
+#leftContentContainer {
     display: flex;
     flex-direction: column;
-    margin: 20px;
     transition: width 1s ease;
     width: 100%;
     overflow: auto;
-
 }
-#search-container{
+
+#search-container {
     width: 100%;
     margin-top: 20px
 }
-#input-recherche{
+
+#input-recherche {
     width: 100%;
     height: 30px;
-    border:0;
+    border: 0;
     padding: 0 10px;
     box-sizing: border-box;
     background-color: #f3f3f3;
 }
-.nombre-coiffeur{
+
+.nombre-coiffeur {
     color: #b7b7b7;
     font-size: 14px;
     font-style: italic;
-    margin-top:1px;
+    margin-top: 1px;
 }
-.enseigne-coiffeur{
+
+.enseigne-coiffeur {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -68,19 +82,22 @@ nav{
     font-size: 14px;
     border-radius: 5px;
 }
+
 .enseigne-coiffeur:hover {
     background-color: #bb48bd;
 }
+
 .enseigne-coiffeur:hover .enseigne-coiffeur-info {
     color: white;
 }
-.enseigne-coiffeur-index{
+
+.enseigne-coiffeur-index {
     font-size: 50px;
     color: #ebebeb;
 }
 
 
-#buttons-container > *{
+.nav-icon {
     width: 24px;
     height: 24px;
     padding-right: 19px;
@@ -88,32 +105,27 @@ nav{
 }
 
 
-
-.viewDataSheetContainer,.edit-company-container{
+.viewDataSheetContainer, .edit-company-container {
     display: table-column;
     overflow: auto;
     width: 0;
     transition: width 1s ease;
 }
 
-.viewDataSheetContainer.dataSheetOpened, .edit-company-container.dataSheetOpened{
+.viewDataSheetContainer.dataSheetOpened, .edit-company-container.dataSheetOpened {
     background-color: #f1f1f1;
     display: table-column;
     overflow: auto;
     width: 100%;
 }
 
-
-#container-enseigne{
-}
-
-.labelCell{
+.labelCell {
     text-align: right;
     font-weight: bold;
 }
 
 
-#valueName{
+#valueName {
     font-weight: bold;
 }
 
@@ -126,25 +138,22 @@ nav{
 }
 
 
-
-
-.mapContainer{
+.mapContainer {
     margin-top: 2%;
     height: 60%;
 
 }
 
 
-
-
-#edit-coiffeur{
+#edit-coiffeur {
     margin: 0 10px;
     padding: 37px;
     background-color: white;
     display: flex;
     flex-direction: column;
 }
-#edit-coiffeur input{
+
+#edit-coiffeur input {
 
     margin: 10px 0;
     padding: 5px 5px 5px 10px;
@@ -152,7 +161,7 @@ nav{
     border: 0;
 }
 
-#edit-coiffeur button{
+#edit-coiffeur button {
     width: 150px;
     height: 40px;
     border: none;
@@ -164,9 +173,8 @@ nav{
 }
 
 
-.closeButton
-{
-    color : #ffffff;
+.closeButton {
+    color: #ffffff;
     background-color: #a73987;
     border-radius: 50%;
     font-family: Arial;
@@ -177,40 +185,41 @@ nav{
     border: none;
 }
 
-.closeButton:hover
-{
+.closeButton:hover {
     cursor: pointer;
 }
 
-.closeButton.stay{
+.closeButton.stay {
     position: absolute;
     top: 7%;
 }
 
-.closeButton.appearing{
+.closeButton.appearing {
     position: absolute;
     top: 7%;
     animation: appearing 0.5s forwards;
 }
 
-.closeButton.disappearing{
+.closeButton.disappearing {
     position: absolute;
     top: 7%;
     animation: disappearing 0.5s forwards;
 }
-.closeButtonContainer{
+
+.closeButtonContainer {
     display: flex;
     justify-content: flex-end;
 }
 
-.selected{
-    background-color: #7b208f;
-}
-.selected:hover{
+.selected {
     background-color: #7b208f;
 }
 
-#isModified{
+.selected:hover {
+    background-color: #7b208f;
+}
+
+#isModified {
     color: #808080FF;
     text-align: center;
     font-style: oblique;
@@ -219,25 +228,24 @@ nav{
     transition: height 1s ease;
 }
 
-#isModified.showIsModified{
+#isModified.showIsModified {
     height: 25px;
 }
-#isModified.hideIsModified{
+
+#isModified.hideIsModified {
     height: 0;
 }
 
-.hidden{
+.hidden {
     display: none;
 }
-
 
 
 @keyframes appearing {
     from {
         transform: scale(0) rotate(-40deg);
     }
-    to
-    {
+    to {
         transform: scale(1) rotate(0deg);
     }
 }
@@ -246,8 +254,7 @@ nav{
     from {
         transform: scale(1) rotate(0deg);
     }
-    to
-    {
+    to {
         transform: scale(0) rotate(-40deg);
     }
 }
