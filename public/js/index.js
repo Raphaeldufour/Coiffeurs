@@ -2,9 +2,6 @@ const templateEnseigne = document.getElementById('template-enseigne');
 const containerEnseigne = document.getElementById('container-enseigne');
 const nombreCoiffeurs = document.getElementById('nombre-coiffeur');
 const inputRecherche = document.getElementById('input-recherche');
-const logImgContainer = document.getElementById('logImgContainer');
-const mainContainer = document.getElementById('main');
-const leftContentContainer = document.getElementById('leftContentContainer');
 const dataSheetViewContainer = document.querySelector('.viewDataSheetContainer');
 const dataSheetEditContainer = document.querySelector('.edit-company-container');
 const logoutButton = document.getElementById('logout-icon');
@@ -20,15 +17,6 @@ const modifLabel = currentDataSheetContainer.querySelector('#isModified');
 let indexPage = 10;
 let enseignes = [];
 let affichageEnseignes = [];
-
-
-function dontContainsLetters(str) {
-    return !/[a-zA-Z]/.test(str);
-}
-
-function containsDigits(string) {
-    return /\d/.test(string);
-}
 
 function createMapFor(Lat, Lng) {
     mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'

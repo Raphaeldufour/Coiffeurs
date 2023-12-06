@@ -25,24 +25,17 @@ nav {
     font-size: 18px;
     font-weight: bold;
 }
+.nav-icon {
+    width: 24px;
+    height: 24px;
+    padding-right: 19px;
+    cursor: pointer;
+}
 
 main {
     height: 90%;
     display: flex;
     flex-direction: row;
-}
-
-#load-more-button {
-    align-self: center;
-    text-align: center;
-    width: 131px;
-    padding: 13px;
-    border: none;
-    border-radius: 30px;
-    background-color: #a73987;
-    color: white;
-    cursor: pointer;
-    margin-bottom: 20px;
 }
 
 #leftContentContainer {
@@ -96,13 +89,19 @@ main {
     color: #ebebeb;
 }
 
-
-.nav-icon {
-    width: 24px;
-    height: 24px;
-    padding-right: 19px;
+#load-more-button {
+    align-self: center;
+    text-align: center;
+    width: 131px;
+    padding: 13px;
+    border: none;
+    border-radius: 30px;
+    background-color: #a73987;
+    color: white;
     cursor: pointer;
+    margin-bottom: 20px;
 }
+
 
 
 .viewDataSheetContainer, .edit-company-container {
