@@ -311,6 +311,7 @@ function checkObserver() {
 }
 
 function filterEnseignes() {
+    closeDataSheet();
     const searchValue = inputRecherche.value;
     affichageEnseignes = enseignes.filter(enseigne => {
         const nomLowerCase = enseigne.nom ? enseigne.nom.toLowerCase() : '';
