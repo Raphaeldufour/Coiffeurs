@@ -39,10 +39,12 @@ main {
 }
 
 #leftContentContainer {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 20px;
     display: flex;
     flex-direction: column;
     transition: width 1s ease;
-    width: 100%;
     overflow: auto;
 }
 
@@ -74,6 +76,7 @@ main {
     padding: 0 22px;
     font-size: 14px;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 .enseigne-coiffeur:hover {
