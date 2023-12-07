@@ -31,23 +31,19 @@ db.serialize(async () => {
     num INTEGER,
     voie VARCHAR(100),
     ville VARCHAR(50),
-    codepostal INTEGER,
-    markerinnerhtml TEXT,
-    liinnerhtml TEXT,
-    addresse VARCHAR(200)
+    codepostal INTEGER
   );`);
     db.run(`
 CREATE TABLE IF NOT EXISTS Utilisateurs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
-    mot_de_passe_hache VARCHAR(255) NOT NULL,
-    date_creation DATETIME DEFAULT CURRENT_TIMESTAMP
+    password VARCHAR(255) NOT NULL
 );`);
 
     // Insérer les données du fichier JSON dans la table
     const insertStmt = db.prepare(`INSERT INTO enseignes (
-    nom, lat, lng, num, voie, ville, codepostal, markerinnerhtml, liinnerhtml, addresse
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+    nom, lat, lng, num, voie, ville, codepostal
+  ) VALUES (?, ?, ?, ?, ?, ?, ?)`);
 
     jsonData.data.features.forEach(feature => {
         const properties = feature.properties;
@@ -58,15 +54,12 @@ CREATE TABLE IF NOT EXISTS Utilisateurs (
             properties.num,
             properties.voie,
             properties.ville,
-            properties.codepostal,
-            properties.markerinnerhtml,
-            properties.liinnerhtml,
-            properties.addresse
+            properties.codepostal
         );
     });
 
     const insertUserStmt = db.prepare(`INSERT INTO Utilisateurs (
-    email, mot_de_passe_hache
+    email, password
     ) VALUES (?, ?)`);
 
     insertUserStmt.run(

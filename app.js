@@ -127,7 +127,7 @@ app.post('/user', async (req, res) => {
         if (err) {
             res.status(500).send('Erreur lors de la récupération de l\'utilisateur');
         } else if (user) {
-            const passwordCorrect = await bcrypt.compare(passwordBody, user.mot_de_passe_hache);
+            const passwordCorrect = await bcrypt.compare(passwordBody, user.password);
             if (passwordCorrect) {
                 res.json({message: 'Connexion réussie'});
             } else {
