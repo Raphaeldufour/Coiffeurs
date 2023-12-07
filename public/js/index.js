@@ -8,6 +8,7 @@ const logoutButton = document.getElementById('logout-icon');
 const loginButton = document.getElementById('login-icon');
 const addButton = document.getElementById('add-icon');
 
+const leftContentContainer = document.querySelector('#leftContentContainer');
 const currentDataSheetContainer = (sessionStorage.getItem('isLoggedIn') !== 'true') ? dataSheetViewContainer : dataSheetEditContainer;
 const mapContainer = currentDataSheetContainer.querySelector('.mapContainer');
 const editButton = currentDataSheetContainer.querySelector('#edit-coiffeur-submit');
@@ -41,6 +42,7 @@ function closeDataSheet() {
     closeButton.classList.add('disappearing');
 
     currentDataSheetContainer.classList.remove('dataSheetOpened');
+    leftContentContainer.classList.remove('givePlaceToRightContent');
 
     currentDataSheetContainer.addEventListener('transitionend', (event) => {
         mapContainer.innerHTML = '';
@@ -221,6 +223,7 @@ function generateRightContent(enseigne, typeOfDataSheet) {
             mapContainer.innerHTML = ''
         }
     });
+    leftContentContainer.classList.add('givePlaceToRightContent');
     currentDataSheetContainer.classList.add('dataSheetOpened');
 
 }

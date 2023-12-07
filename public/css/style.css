@@ -48,6 +48,10 @@ main {
     overflow: auto;
 }
 
+#leftContentContainer.givePlaceToRightContent {
+    width: 50%;
+}
+
 #search-container {
     width: 100%;
     margin-top: 20px
@@ -118,7 +122,7 @@ main {
     background-color: #f1f1f1;
     display: table-column;
     overflow: auto;
-    width: 100%;
+    width: 50%;
 }
 
 .labelCell {
