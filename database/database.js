@@ -40,6 +40,9 @@ CREATE TABLE IF NOT EXISTS Utilisateurs (
     password VARCHAR(255) NOT NULL
 );`);
 
+    db.run('CREATE TABLE IF NOT EXISTS Tokens(token VARCHAR(255) NOT NULL, user_id int, expirationDate DATE , PRIMARY KEY (token), FOREIGN KEY (user_id) REFERENCES Utilisateurs(id))');
+
+
     // Insérer les données du fichier JSON dans la table
     const insertStmt = db.prepare(`INSERT INTO enseignes (
     nom, lat, lng, num, voie, ville, codepostal

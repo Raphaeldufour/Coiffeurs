@@ -50,9 +50,12 @@ function okayForEdit(ancientInfos , newInfos) {
 
 app.get('/api/enseignes', (req, res) => {
     db.all('SELECT * FROM enseignes ORDER BY nom', (err, enseignes) => {
-        if (err) {
+        if (err)
+        {
             res.status(500).send('Erreur lors de la récupération des enseignes');
-        } else {
+        }
+        else
+        {
             res.json(enseignes);
         }
     });
