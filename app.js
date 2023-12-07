@@ -2,14 +2,13 @@ import express from 'express';
 import sqlite3 from 'sqlite3';
 import bodyParser from 'body-parser';
 import bcrypt from "bcrypt";
+import randomstring from "randomstring";
 
 const app = express();
 app.use(express.static('public'));
 app.use(bodyParser.json());
 
 const db = new sqlite3.Database('database/database.db');
-
-
 
 function dontContainsLetters(str) {
     return !/[a-zA-Z]/.test(str);
@@ -28,7 +27,8 @@ function okayForEdit(ancientInfos , newInfos) {
         isNaN(newInfos[6]) || newInfos[6].includes(' ') || newInfos[6] === '' || Math.abs(parseFloat(newInfos[6])) > 180
     ) {
         isOkay = false;
-    } else if (
+    }
+    else if (
         dontContainsLetters(newInfos[0]) ||
         dontContainsLetters(newInfos[2]) ||
         dontContainsLetters(newInfos[4]) || containsDigits(newInfos[4])
@@ -132,7 +132,13 @@ app.post('/user', async (req, res) => {
         } else if (user) {
             const passwordCorrect = await bcrypt.compare(passwordBody, user.password);
             if (passwordCorrect) {
-                res.json({message: 'Connexion réussie'});
+                const token = randomstring.generate();
+                db.run('UPDATE Utilisateurs SET token = ?, expirationDate = ? WHERE id = ?', [token, Date.now()+86400000, user.id]);
+                res.json({
+                    message: 'Connexion réussie',
+                    token: token,
+                    id: user.id
+                });
             } else {
                 res.status(401).json({message: 'Mot de passe incorrect'});
             }
@@ -141,6 +147,31 @@ app.post('/user', async (req, res) => {
         }
     });
 });
+
+function verifyToken(req, res, next) {
+    // Récupérer le token de l'en-tête de la requête
+    const token = req.headers['authorization'];
+
+    // Vérifier si le token existe
+    if (!token) {
+        return res.status(403).send({ message: 'No token provided.' });
+    }
+
+    // Vérifier le token dans la base de données
+    db.get('SELECT * FROM Tokens WHERE token = ?', [token], (err, tokenData) => {
+        if (err) {
+            return res.status(500).send({ message: 'Failed to authenticate token.' });
+        }
+
+        // Vérifier si le token est expiré
+        if (tokenData && tokenData.expirationDate <= Date.now()) {
+            return res.status(401).send({ message: 'Token expired.' });
+        }
+
+        // Si tout est bon, passer à la prochaine fonction de gestion de la requête
+        next();
+    });
+}
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
