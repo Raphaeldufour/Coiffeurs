@@ -219,6 +219,7 @@ main {
 
 .selected {
     background-color: #7b208f;
+    color:#ffffff;
 }
 
 .selected:hover {
