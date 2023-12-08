@@ -246,7 +246,7 @@ function renderEnseigne(enseigne, index) {
     const clone = templateEnseigne.content.cloneNode(true);
     const enseigneElement = clone.querySelector('.enseigne-coiffeur');
     let typeOfDataSheet = '';
-    clone.querySelector('.enseigne-coiffeur').addEventListener('click', () => {
+    enseigneElement.addEventListener('click', () => {
             if (sessionStorage.getItem('isLoggedIn') !== 'true') {
                 typeOfDataSheet = 'view';
             } else {
