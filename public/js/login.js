@@ -29,7 +29,9 @@ async function handleLoginFormSubmission(click) {
     };
     const response = await checkLoginAndPassword(data);
     if (response.ok) {
-        sessionStorage.setItem('isLoggedIn', 'true');
+        const responseData = await response.json();
+        localStorage.setItem('token', responseData.token);
+        localStorage.setItem('isLoggedIn', 'true');
         window.location.href = "http://localhost:3000";
     } else {
         const error = await response.json();

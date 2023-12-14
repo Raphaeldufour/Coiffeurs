@@ -18,7 +18,7 @@ function containsDigits(string) {
     return /\d/.test(string);
 }
 
-function okayForEdit(ancientInfos , newInfos) {
+function okayForEdit(ancientInfos, newInfos) {
     let isOkay = true;
     if (
         isNaN(newInfos[1]) || newInfos[1].includes(' ') || newInfos[1] === '' ||
@@ -27,8 +27,7 @@ function okayForEdit(ancientInfos , newInfos) {
         isNaN(newInfos[6]) || newInfos[6].includes(' ') || newInfos[6] === '' || Math.abs(parseFloat(newInfos[6])) > 180
     ) {
         isOkay = false;
-    }
-    else if (
+    } else if (
         dontContainsLetters(newInfos[0]) ||
         dontContainsLetters(newInfos[2]) ||
         dontContainsLetters(newInfos[4]) || containsDigits(newInfos[4])
@@ -50,18 +49,15 @@ function okayForEdit(ancientInfos , newInfos) {
 
 app.get('/api/enseignes', (req, res) => {
     db.all('SELECT * FROM enseignes ORDER BY nom', (err, enseignes) => {
-        if (err)
-        {
+        if (err) {
             res.status(500).send('Erreur lors de la récupération des enseignes');
-        }
-        else
-        {
+        } else {
             res.json(enseignes);
         }
     });
 });
 
-app.patch('/api/enseignes', (req, res) => {
+app.patch('/api/enseignes', verifyToken, (req, res) => {
     const data = req.body;
     const id = data.id;
     const ancientInfos = [data.ancientInfos.nom, data.ancientInfos.num, data.ancientInfos.voie, data.ancientInfos.codepostal, data.ancientInfos.ville, data.ancientInfos.lat, data.ancientInfos.lng];
@@ -79,28 +75,24 @@ app.patch('/api/enseignes', (req, res) => {
 
         db.run('UPDATE enseignes SET nom = ?, lat = ?, lng = ?, num = ?, voie = ?, ville = ?, codepostal = ? WHERE id = ?', [name, lat, lng, num, voie, ville, codepostal, id], (err) => {
             if (err) {
-                res.status(500).json({message:'Erreur lors de la modification de l\'enseigne'});
+                res.status(500).json({message: 'Erreur lors de la modification de l\'enseigne'});
             } else {
 
                 res.json({message: 'Enseigne modifiée avec succès'});
             }
         });
-    }
-    else
-    {
-        res.status(500).json({message:'Erreur : certains champs n\'ont pas été remplis ou sont incorrects'});
+    } else {
+        res.status(500).json({message: 'Erreur : certains champs n\'ont pas été remplis ou sont incorrects'});
     }
 });
 
 
-app.put('/api/enseignes', (req, res) =>
-{
+app.put('/api/enseignes', (req, res) => {
     const data = req.body;
 
     const newInfos = [data.newInfos.nom, data.newInfos.num, data.newInfos.voie, data.newInfos.codepostal, data.newInfos.ville, data.newInfos.lat, data.newInfos.lng];
 
-    if(okayForEdit(null,newInfos))
-    {
+    if (okayForEdit(null, newInfos)) {
         const name = newInfos[0];
         const num = newInfos[1];
         const voie = newInfos[2];
@@ -111,14 +103,13 @@ app.put('/api/enseignes', (req, res) =>
 
         db.run('INSERT INTO enseignes (nom, lat, lng, num, voie, ville, codepostal) VALUES (?, ?, ?, ?, ?, ?, ?)', [name, lat, lng, num, voie, ville, codepostal], (err) => {
             if (err) {
-                res.status(500).json({message:'Erreur lors de la création de l\'enseigne'});
+                res.status(500).json({message: 'Erreur lors de la création de l\'enseigne'});
             } else {
                 res.json({message: 'Enseigne créée avec succès'});
             }
         });
-    }else
-    {
-        res.status(500).json({message:'Erreur : certains champs n\'ont pas été remplis ou sont incorrects'});
+    } else {
+        res.status(500).json({message: 'Erreur : certains champs n\'ont pas été remplis ou sont incorrects'});
     }
 });
 
@@ -133,11 +124,19 @@ app.post('/user', async (req, res) => {
             const passwordCorrect = await bcrypt.compare(passwordBody, user.password);
             if (passwordCorrect) {
                 const token = randomstring.generate();
-                db.run('UPDATE Utilisateurs SET token = ?, expirationDate = ? WHERE id = ?', [token, Date.now()+86400000, user.id]);
-                res.json({
-                    message: 'Connexion réussie',
-                    token: token,
-                    id: user.id
+                const expirationDate = Date.now() + 3600000;
+                db.run('DELETE FROM Tokens WHERE user_id = ?', [user.id], (err) => {
+                    if (err) {
+                        res.status(500).send('Erreur lors de la suppression du token');
+                    } else {
+                        db.run('INSERT INTO Tokens (token, user_id, expirationDate) VALUES (?, ?, ?)', [token, user.id, expirationDate], (err) => {
+                            if (err) {
+                                res.status(500).send('Erreur lors de l\'ajout du token');
+                            } else {
+                                res.json({token, id: user.id});
+                            }
+                        });
+                    }
                 });
             } else {
                 res.status(401).json({message: 'Mot de passe incorrect'});
@@ -151,25 +150,23 @@ app.post('/user', async (req, res) => {
 function verifyToken(req, res, next) {
     // Récupérer le token de l'en-tête de la requête
     const token = req.headers['authorization'];
-
-    // Vérifier si le token existe
+    const id = req.headers['id'];
+    console.log(token, id);
     if (!token) {
-        return res.status(403).send({ message: 'No token provided.' });
+        return res.status(403).send({message: 'No token provided.'});
     }
-
-    // Vérifier le token dans la base de données
-    db.get('SELECT * FROM Tokens WHERE token = ?', [token], (err, tokenData) => {
+    db.get('SELECT * FROM Tokens WHERE token = ? AND user_id = ?', [token, id], (err, token) => {
         if (err) {
-            return res.status(500).send({ message: 'Failed to authenticate token.' });
+            res.status(500).send('Erreur lors de la récupération du token');
+        } else if (token) {
+            if (Date.now() > token.expirationDate) {
+                res.status(401).send('Token expiré');
+            } else {
+                next();
+            }
+        } else {
+            res.status(401).send('Token invalide');
         }
-
-        // Vérifier si le token est expiré
-        if (tokenData && tokenData.expirationDate <= Date.now()) {
-            return res.status(401).send({ message: 'Token expired.' });
-        }
-
-        // Si tout est bon, passer à la prochaine fonction de gestion de la requête
-        next();
     });
 }
 

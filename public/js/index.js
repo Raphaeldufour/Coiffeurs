@@ -9,7 +9,7 @@ const loginButton = document.getElementById('login-icon');
 const addButton = document.getElementById('add-icon');
 
 const leftContentContainer = document.querySelector('#leftContentContainer');
-const currentDataSheetContainer = (sessionStorage.getItem('isLoggedIn') !== 'true') ? dataSheetViewContainer : dataSheetEditContainer;
+const currentDataSheetContainer = (localStorage.getItem('isLoggedIn') !== 'true') ? dataSheetViewContainer : dataSheetEditContainer;
 const mapContainer = currentDataSheetContainer.querySelector('.mapContainer');
 const editButton = currentDataSheetContainer.querySelector('#edit-coiffeur-submit');
 const closeButton = currentDataSheetContainer.querySelector('.closeButton');
@@ -20,6 +20,7 @@ let enseignes = [];
 let affichageEnseignes = [];
 
 function createMapFor(Lat, Lng) {
+    mapContainer.innerHTML = ''; // Clear the map container
     mapboxgl.accessToken = 'pk.eyJ1IjoibGEyMjg2MjgiLCJhIjoiY2xwODFhNzhvMHc5eDJqbDY5eDk1eHRsdCJ9.G8pLJplueekCc7mvrKomTg'
     const map = new mapboxgl.Map({
         container: mapContainer, // container
@@ -32,9 +33,6 @@ function createMapFor(Lat, Lng) {
         .setLngLat([Lng, Lat])
         .addTo(map);
 }
-
-
-
 
 function closeDataSheet() {
     closeButton.classList.remove('stay');
@@ -83,7 +81,9 @@ async function sendModifiedData(data, typeOfDataSheet) {
     const response = await fetch('api/enseignes', {
         method: method,
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('token'),
+            'id': localStorage.getItem('user_id')
         },
         body: JSON.stringify(data)
     })
@@ -126,106 +126,116 @@ function generateRightContent(enseigne, typeOfDataSheet) {
     let mapLat = null;
     let mapLng = null;
     let inRealSwitching = getSwitchingState();
+
     if (enseigne !== null) {
         currentInfos = [enseigne.nom, enseigne.num, enseigne.voie, enseigne.codepostal, enseigne.ville, enseigne.lat, enseigne.lng];
         id = enseigne.id;
         mapLat = currentInfos[5];
         mapLng = currentInfos[6];
     }
-    closeButton.classList.remove('disappearing');
-    if (inRealSwitching === true) {
-        closeButton.classList.remove('appearing');
-        closeButton.classList.add('stay');
-    } else {
-        closeButton.classList.add('appearing');
-    }
 
-    closeButton.addEventListener('click', (e) => {
-        closeDataSheet();
-    });
+    closeButton.classList.remove('disappearing', 'appearing');
+    closeButton.classList.add(inRealSwitching ? 'stay' : 'appearing');
+
+    closeButton.addEventListener('click', closeDataSheet);
+
     if (typeOfDataSheet === 'view') {
-        fillViewDataSheet(currentInfos)
+        fillViewDataSheet(currentInfos);
     } else {
-        fillEditDataSheet(currentInfos, typeOfDataSheet)
-        editButton.onclick = () => {
-            let newInfos = [dataSheetEditContainer.querySelector('#nom').value, dataSheetEditContainer.querySelector('#numero').value, dataSheetEditContainer.querySelector('#voie').value, dataSheetEditContainer.querySelector('#code-postal').value, dataSheetEditContainer.querySelector('#ville').value, dataSheetEditContainer.querySelector('#latitude').value, dataSheetEditContainer.querySelector('#longitude').value];
-                const data =
-                    {
-                        id: id,
-                        ancientInfos:{
-                            nom: currentInfos[0],
-                            num: currentInfos[1],
-                            voie: currentInfos[2],
-                            codepostal: currentInfos[3],
-                            ville: currentInfos[4],
-                            lat: currentInfos[5],
-                            lng: currentInfos[6]
-                        },
-
-                        newInfos:{
-                            nom: newInfos[0],
-                            num: newInfos[1],
-                            voie: newInfos[2],
-                            codepostal: newInfos[3],
-                            ville: newInfos[4],
-                            lat: newInfos[5],
-                            lng: newInfos[6]
-                        }
-
-                    }
-                const resp = sendModifiedData(data, typeOfDataSheet);
-                resp.then(response => {
-                    if (response.ok) {
-                        if (typeOfDataSheet === 'edit') {
-
-                            enseigne.nom = newInfos[0];
-                            enseigne.num = newInfos[1];
-                            enseigne.voie = newInfos[2];
-                            enseigne.codepostal = newInfos[3];
-                            enseigne.ville = newInfos[4];
-                            enseigne.lat = newInfos[5];
-                            enseigne.lng = newInfos[6];
-
-
-                            mapLat = newInfos[5];
-                            mapLng = newInfos[6];
-                            currentInfos = newInfos;
-                            editHtmlElement(newInfos, typeOfDataSheet)
-                        }
-                        else if (typeOfDataSheet === 'add')
-                        {
-                            response.json().then(data => {
-                                alert(data.message)
-                                window.location.reload();
-                            });
-                        }
-
-                    }
-                    else
-                    {
-                        const error = response.json()
-                        error.then(data => {
-                            alert(data.message)
-                        })
-                    }
-                });
-        }
+        fillEditDataSheet(currentInfos, typeOfDataSheet);
+        editButton.onclick = () => handleEditButtonClick(id, currentInfos, typeOfDataSheet, enseigne);
     }
-    if (currentDataSheetContainer.classList.contains('dataSheetOpened') === true && inRealSwitching === true && enseigne !== null) {
-        createMapFor(mapLat, mapLng)
-    } else {
-        mapContainer.innerHTML = ''
-    }
-    currentDataSheetContainer.addEventListener('transitionend', (event) => {
-        if (currentDataSheetContainer.classList.contains('dataSheetOpened') === true && enseigne !== null) {
-            createMapFor(mapLat, mapLng)
-        } else {
-            mapContainer.innerHTML = ''
-        }
-    });
+
+    updateMapContainer(inRealSwitching, enseigne, mapLat, mapLng);
+
     leftContentContainer.classList.add('givePlaceToRightContent');
     currentDataSheetContainer.classList.add('dataSheetOpened');
+}
 
+function handleEditButtonClick(id, currentInfos, typeOfDataSheet, enseigne) {
+    let newInfos = getNewInfosFromDataSheet();
+    const data = prepareDataForRequest(id, currentInfos, newInfos);
+    const resp = sendModifiedData(data, typeOfDataSheet);
+
+    resp.then(response => handleResponse(response, typeOfDataSheet, newInfos, enseigne));
+}
+
+function getNewInfosFromDataSheet() {
+    return [
+        dataSheetEditContainer.querySelector('#nom').value,
+        dataSheetEditContainer.querySelector('#numero').value,
+        dataSheetEditContainer.querySelector('#voie').value,
+        dataSheetEditContainer.querySelector('#code-postal').value,
+        dataSheetEditContainer.querySelector('#ville').value,
+        dataSheetEditContainer.querySelector('#latitude').value,
+        dataSheetEditContainer.querySelector('#longitude').value
+    ];
+}
+
+function prepareDataForRequest(id, currentInfos, newInfos) {
+    return {
+        id: id,
+        ancientInfos: {
+            nom: currentInfos[0],
+            num: currentInfos[1],
+            voie: currentInfos[2],
+            codepostal: currentInfos[3],
+            ville: currentInfos[4],
+            lat: currentInfos[5],
+            lng: currentInfos[6]
+        },
+        newInfos: {
+            nom: newInfos[0],
+            num: newInfos[1],
+            voie: newInfos[2],
+            codepostal: newInfos[3],
+            ville: newInfos[4],
+            lat: newInfos[5],
+            lng: newInfos[6]
+        }
+    };
+}
+
+function handleResponse(response, typeOfDataSheet, newInfos, enseigne) {
+    if (response.ok) {
+        if (typeOfDataSheet === 'edit') {
+            updateEnseigneInfos(enseigne, newInfos);
+            editHtmlElement(newInfos, typeOfDataSheet);
+        } else if (typeOfDataSheet === 'add') {
+            response.json().then(data => {
+                alert(data.message);
+                window.location.reload();
+            });
+        }
+    } else {
+        response.json().then(data => alert(data.message));
+    }
+}
+
+function updateEnseigneInfos(enseigne, newInfos) {
+    enseigne.nom = newInfos[0];
+    enseigne.num = newInfos[1];
+    enseigne.voie = newInfos[2];
+    enseigne.codepostal = newInfos[3];
+    enseigne.ville = newInfos[4];
+    enseigne.lat = newInfos[5];
+    enseigne.lng = newInfos[6];
+}
+
+function updateMapContainer(inRealSwitching, enseigne, mapLat, mapLng) {
+    if (currentDataSheetContainer.classList.contains('dataSheetOpened') && inRealSwitching && enseigne) {
+        createMapFor(mapLat, mapLng);
+    } else {
+        mapContainer.innerHTML = '';
+    }
+
+    currentDataSheetContainer.addEventListener('transitionend', () => {
+        if (currentDataSheetContainer.classList.contains('dataSheetOpened') && enseigne) {
+            createMapFor(mapLat, mapLng);
+        } else {
+            mapContainer.innerHTML = '';
+        }
+    });
 }
 
 async function getEnseignes() {
@@ -247,7 +257,7 @@ function renderEnseigne(enseigne, index) {
     const enseigneElement = clone.querySelector('.enseigne-coiffeur');
     let typeOfDataSheet = '';
     enseigneElement.addEventListener('click', () => {
-            if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+            if (localStorage.getItem('isLoggedIn') !== 'true') {
                 typeOfDataSheet = 'view';
             } else {
                 typeOfDataSheet = 'edit';
@@ -327,11 +337,13 @@ function filterEnseignes() {
 
 
 function checkLogin() {
-    let isLogged = sessionStorage.getItem('isLoggedIn');
+    let isLogged = localStorage.getItem('isLoggedIn');
     if (isLogged === 'true') {
         loginButton.classList.add('hidden');
         logoutButton.addEventListener('click', () => {
-                sessionStorage.setItem('isLoggedIn', 'false');
+                localStorage.removeItem('token');
+                localStorage.removeItem('user_id');
+                localStorage.setItem('isLoggedIn', 'false');
                 window.location.reload();
             }
         );

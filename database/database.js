@@ -2,11 +2,11 @@ import fs from 'fs';
 import sqlite3 from 'sqlite3';
 import bcrypt from 'bcrypt';
 
-// Charger le fichier JSON
+
 const rawData = fs.readFileSync('coiffeurs.json');
 const jsonData = JSON.parse(rawData);
 
-// Créer une nouvelle base de données SQLite
+
 const db = new sqlite3.Database('database.db');
 
 const saltRounds = 10;
@@ -35,7 +35,7 @@ db.serialize(async () => {
   );`);
     db.run(`
 CREATE TABLE IF NOT EXISTS Utilisateurs (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL
 );`);
@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS Utilisateurs (
             properties.codepostal
         );
     });
+    insertStmt.finalize();
 
     const insertUserStmt = db.prepare(`INSERT INTO Utilisateurs (
     email, password
@@ -69,7 +70,6 @@ CREATE TABLE IF NOT EXISTS Utilisateurs (
         email,
         (await hashPassword(myPlaintextPassword)).hash
     );
-    insertStmt.finalize();
     insertUserStmt.finalize();
 });
 
