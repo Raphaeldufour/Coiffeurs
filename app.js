@@ -48,13 +48,17 @@ function okayForEdit(ancientInfos, newInfos) {
 
 
 app.get('/api/enseignes', (req, res) => {
-    db.all('SELECT * FROM enseignes ORDER BY nom', (err, enseignes) => {
-        if (err) {
-            res.status(500).send('Erreur lors de la récupération des enseignes');
-        } else {
-            res.json(enseignes);
-        }
-    });
+    if(req.query.index)
+    {
+        console.log(req.query.index);
+        db.all('SELECT * FROM enseignes ORDER BY nom LIMIT 10 OFFSET ?', req.query.index, (err, enseignes) => {
+            if (err) {
+                res.status(500).send('Erreur lors de la récupération des enseignes');
+            } else {
+                res.json(enseignes);
+            }
+        });
+    }
 });
 
 app.patch('/api/enseignes', verifyToken, (req, res) => {
@@ -114,6 +118,14 @@ app.put('/api/enseignes', (req, res) => {
 });
 
 
+function deleteExpiredToken() {
+    db.run('DELETE FROM Tokens WHERE expirationDate < ?', Date.now(), (err) => {
+        if (err) {
+            console.log('Erreur lors de la suppression des tokens expirés');
+        }
+    });
+}
+
 app.post('/user', async (req, res) => {
     const emailBody = req.body.email;
     const passwordBody = req.body.password;
@@ -125,19 +137,14 @@ app.post('/user', async (req, res) => {
             if (passwordCorrect) {
                 const token = randomstring.generate();
                 const expirationDate = Date.now() + 3600000;
-                db.run('DELETE FROM Tokens WHERE user_id = ?', [user.id], (err) => {
+                db.run('INSERT INTO Tokens (token, user_id, expirationDate) VALUES (?, ?, ?)', [token, user.id, expirationDate], (err) => {
                     if (err) {
-                        res.status(500).send('Erreur lors de la suppression du token');
+                        res.status(500).send('Erreur lors de la création du token');
                     } else {
-                        db.run('INSERT INTO Tokens (token, user_id, expirationDate) VALUES (?, ?, ?)', [token, user.id, expirationDate], (err) => {
-                            if (err) {
-                                res.status(500).send('Erreur lors de l\'ajout du token');
-                            } else {
-                                res.json({token, id: user.id});
-                            }
-                        });
+                        res.json({token: token});
                     }
                 });
+                deleteExpiredToken();
             } else {
                 res.status(401).json({message: 'Mot de passe incorrect'});
             }

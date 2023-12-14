@@ -1,2 +1,1 @@
-PATCH http://localhost:3000/api/enseignes
-```
+GET http://localhost:3000/api/enseignes?index=10

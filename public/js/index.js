@@ -239,7 +239,7 @@ function updateMapContainer(inRealSwitching, enseigne, mapLat, mapLng) {
 }
 
 async function getEnseignes() {
-    const response = await fetch('/api/enseignes');
+    const response = await fetch(`/api/enseignes?index=${indexPage}`);
     const companies = await response.json();
     return companies;
 }
@@ -295,7 +295,8 @@ function renderEnseignes(enseignes, startIndex, endIndex) {
     }
 }
 
-function loadMoreEnseignes(enseignes) {
+async function loadMoreEnseignes(enseignes) {
+    enseignes.push(...await getEnseignes());
     renderEnseignes(enseignes, indexPage - 10, indexPage);
     indexPage += 10;
     nombreCoiffeurs.textContent = enseignes.length.toString();
@@ -365,9 +366,8 @@ async function init() {
     checkLogin();
     containerEnseigne.scrollTop = 0;
     enseignes = await getEnseignes();
+    console.log(enseignes);
     affichageEnseignes = enseignes;
-    loadMoreEnseignes(affichageEnseignes);
-
     checkObserver();
     inputRecherche.addEventListener('input', filterEnseignes);
 }
