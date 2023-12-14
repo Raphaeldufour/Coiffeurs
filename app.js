@@ -150,12 +150,10 @@ app.post('/user', async (req, res) => {
 function verifyToken(req, res, next) {
     // Récupérer le token de l'en-tête de la requête
     const token = req.headers['authorization'];
-    const id = req.headers['id'];
-    console.log(token, id);
     if (!token) {
         return res.status(403).send({message: 'No token provided.'});
     }
-    db.get('SELECT * FROM Tokens WHERE token = ? AND user_id = ?', [token, id], (err, token) => {
+    db.get('SELECT * FROM Tokens WHERE token = ?', token, (err, token) => {
         if (err) {
             res.status(500).send('Erreur lors de la récupération du token');
         } else if (token) {
