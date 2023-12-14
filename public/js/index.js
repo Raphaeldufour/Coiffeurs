@@ -364,7 +364,6 @@ function checkLogin() {
 
 async function init() {
     checkLogin();
-    containerEnseigne.scrollTop = 0;
     enseignes = await getEnseignes();
     console.log(enseignes);
     affichageEnseignes = enseignes;
