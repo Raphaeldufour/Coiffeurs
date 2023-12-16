@@ -48,28 +48,38 @@ function okayForEdit(ancientInfos, newInfos) {
 
 
 app.get('/api/enseignes', (req, res) => {
+    let filter = req.query.filter;
+    console.log("filtre courant= "+filter);
     if(req.query.index)
     {
         let response = {};
         console.log(req.query.index);
-        db.all('SELECT * FROM enseignes ORDER BY nom LIMIT 10 OFFSET ?', req.query.index, (err, enseignes) => {
+        let offset = parseInt(req.query.index);
+
+        db.all('SELECT * FROM enseignes WHERE nom LIKE ? or ville LIKE ? ORDER BY nom LIMIT 10 OFFSET ?', [`%${filter}%`,`%${filter}%`,offset], (err, enseignes) => {
             if (err) {
                 res.status(500).send('Erreur lors de la récupération des enseignes');
             } else {
-
-                db.get('SELECT COUNT(*) AS count FROM enseignes', (err, count) => {
+                db.get('SELECT COUNT(*) AS count FROM enseignes  WHERE nom LIKE ? or ville LIKE ?',[`%${filter}%`,`%${filter}%`], (err, count) => {
                     if (err) {
                         res.status(500).send('Erreur lors du compte des enseignes');
                     } else {
+                        const totalNumber = count ? count.count : 0
                          response = {
                             enseignes: enseignes,
-                            totalNumber: count.count // count est un objet avec une propriété count
+                            totalNumber: totalNumber // count est un objet avec une propriété count
                         };
                         res.json(response);
                     }
                 })
             }
         });
+
+
+
+
+
+
     }
 });
 

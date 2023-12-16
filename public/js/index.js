@@ -18,6 +18,8 @@ const modifLabel = currentDataSheetContainer.querySelector('#isModified');
 
 let indexPage = 0;
 let enseignes = [];
+let filter = inputRecherche.value;
+console.log(filter);
 
 let resp = null;
 
@@ -39,8 +41,10 @@ function createMapFor(Lat, Lng) {
 function closeDataSheet() {
     closeButton.classList.remove('stay');
     closeButton.classList.remove('appearing');
-    closeButton.classList.add('disappearing');
-
+    if (currentDataSheetContainer.classList.contains('dataSheetOpened'))
+    {
+        closeButton.classList.add('disappearing');
+    }
     currentDataSheetContainer.classList.remove('dataSheetOpened');
     leftContentContainer.classList.remove('givePlaceToRightContent');
 
@@ -241,7 +245,7 @@ function updateMapContainer(inRealSwitching, enseigne, mapLat, mapLng) {
 }
 
 async function getEnseignes() {
-    const response = await fetch(`/api/enseignes?index=${indexPage}`);
+    const response = await fetch(`/api/enseignes?index=${indexPage}&filter=${filter}`);
     const respJSON = await response.json();
     console.log(respJSON);
     return respJSON;
@@ -304,9 +308,10 @@ async function loadMoreEnseignes(enseignes) {
     enseignesToAdd.forEach(enseigne => enseignes.push(enseigne));
 
     console.log(enseignes);
-    console.log(enseignes.length)
+    console.log("enseignes.length" + enseignes.length)
     renderEnseignes(enseignes, indexPage, indexPage+10);
-    indexPage += 10;
+    indexPage = enseignes.length;
+    console.log("indexPage :" + indexPage)
 }
 
 
@@ -320,7 +325,7 @@ function checkObserver() {
     const observer = new IntersectionObserver(function (entries, observer) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                loadMoreEnseignes(enseignes);
+                    loadMoreEnseignes(enseignes);
             }
         });
     }, options);
@@ -328,8 +333,16 @@ function checkObserver() {
     observer.observe(document.getElementById('load-more-button'));
 }
 
-function filterEnseignes() {
+async function filterEnseignes() {
     closeDataSheet();
+    filter = inputRecherche.value;
+    enseignes = [];
+    while (containerEnseigne.firstChild)
+    {
+        containerEnseigne.removeChild(containerEnseigne.firstChild);
+    }
+    await prepareTenFirstEnseignes();
+    /*
     const searchValue = inputRecherche.value;
     enseignes = enseignes.filter(enseigne => {
         const nomLowerCase = enseigne.nom ? enseigne.nom.toLowerCase() : '';
@@ -341,6 +354,7 @@ function filterEnseignes() {
     containerEnseigne.innerHTML = '';
     indexPage = 10;
     loadMoreEnseignes(enseignes);
+     */
 }
 
 
@@ -371,14 +385,20 @@ function checkLogin() {
 
 async function init() {
     checkLogin();
-    resp = await getEnseignes();
-    enseignes = resp.enseignes;
-    console.log('enseignes ' + enseignes);
-    nombreCoiffeurs.textContent = resp.totalNumber.toString();
-    renderEnseignes(enseignes, indexPage, indexPage + 10);
-    indexPage += 10;
+    await prepareTenFirstEnseignes();
     checkObserver();
     inputRecherche.addEventListener('input', filterEnseignes);
 }
+
+async function prepareTenFirstEnseignes() {
+    indexPage = 0;
+    resp = await getEnseignes();
+    enseignes = resp.enseignes;
+    nombreCoiffeurs.textContent = resp.totalNumber.toString();
+    renderEnseignes(enseignes, indexPage, indexPage + 10);
+    indexPage = enseignes.length;
+}
+
+
 
 init();
