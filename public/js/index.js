@@ -15,9 +15,11 @@ const editButton = currentDataSheetContainer.querySelector('#edit-coiffeur-submi
 const closeButton = currentDataSheetContainer.querySelector('.closeButton');
 const modifLabel = currentDataSheetContainer.querySelector('#isModified');
 
-let indexPage = 10;
+
+let indexPage = 0;
 let enseignes = [];
-let affichageEnseignes = [];
+
+let resp = null;
 
 function createMapFor(Lat, Lng) {
     mapContainer.innerHTML = ''; // Clear the map container
@@ -240,8 +242,9 @@ function updateMapContainer(inRealSwitching, enseigne, mapLat, mapLng) {
 
 async function getEnseignes() {
     const response = await fetch(`/api/enseignes?index=${indexPage}`);
-    const companies = await response.json();
-    return companies;
+    const respJSON = await response.json();
+    console.log(respJSON);
+    return respJSON;
 }
 
 function getSwitchingState() {
@@ -296,10 +299,14 @@ function renderEnseignes(enseignes, startIndex, endIndex) {
 }
 
 async function loadMoreEnseignes(enseignes) {
-    enseignes.push(...await getEnseignes());
-    renderEnseignes(enseignes, indexPage - 10, indexPage);
+    let currentResp = await getEnseignes();
+    let enseignesToAdd = currentResp.enseignes;
+    enseignesToAdd.forEach(enseigne => enseignes.push(enseigne));
+
+    console.log(enseignes);
+    console.log(enseignes.length)
+    renderEnseignes(enseignes, indexPage, indexPage+10);
     indexPage += 10;
-    nombreCoiffeurs.textContent = enseignes.length.toString();
 }
 
 
@@ -313,7 +320,7 @@ function checkObserver() {
     const observer = new IntersectionObserver(function (entries, observer) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                loadMoreEnseignes(affichageEnseignes);
+                loadMoreEnseignes(enseignes);
             }
         });
     }, options);
@@ -324,16 +331,16 @@ function checkObserver() {
 function filterEnseignes() {
     closeDataSheet();
     const searchValue = inputRecherche.value;
-    affichageEnseignes = enseignes.filter(enseigne => {
+    enseignes = enseignes.filter(enseigne => {
         const nomLowerCase = enseigne.nom ? enseigne.nom.toLowerCase() : '';
         const villeLowerCase = enseigne.ville ? enseigne.ville.toLowerCase() : '';
         return nomLowerCase.includes(searchValue.toLowerCase())
             || villeLowerCase.includes(searchValue.toLowerCase())
     });
-    nombreCoiffeurs.textContent = affichageEnseignes.length.toString();
+    nombreCoiffeurs.textContent = enseignes.length.toString();
     containerEnseigne.innerHTML = '';
     indexPage = 10;
-    loadMoreEnseignes(affichageEnseignes);
+    loadMoreEnseignes(enseignes);
 }
 
 
@@ -364,9 +371,12 @@ function checkLogin() {
 
 async function init() {
     checkLogin();
-    enseignes = await getEnseignes();
-    console.log(enseignes);
-    affichageEnseignes = enseignes;
+    resp = await getEnseignes();
+    enseignes = resp.enseignes;
+    console.log('enseignes ' + enseignes);
+    nombreCoiffeurs.textContent = resp.totalNumber.toString();
+    renderEnseignes(enseignes, indexPage, indexPage + 10);
+    indexPage += 10;
     checkObserver();
     inputRecherche.addEventListener('input', filterEnseignes);
 }

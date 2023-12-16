@@ -50,12 +50,24 @@ function okayForEdit(ancientInfos, newInfos) {
 app.get('/api/enseignes', (req, res) => {
     if(req.query.index)
     {
+        let response = {};
         console.log(req.query.index);
         db.all('SELECT * FROM enseignes ORDER BY nom LIMIT 10 OFFSET ?', req.query.index, (err, enseignes) => {
             if (err) {
                 res.status(500).send('Erreur lors de la récupération des enseignes');
             } else {
-                res.json(enseignes);
+
+                db.get('SELECT COUNT(*) AS count FROM enseignes', (err, count) => {
+                    if (err) {
+                        res.status(500).send('Erreur lors du compte des enseignes');
+                    } else {
+                         response = {
+                            enseignes: enseignes,
+                            totalNumber: count.count // count est un objet avec une propriété count
+                        };
+                        res.json(response);
+                    }
+                })
             }
         });
     }
