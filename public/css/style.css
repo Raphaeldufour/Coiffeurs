@@ -25,6 +25,7 @@ nav {
     font-size: 18px;
     font-weight: bold;
 }
+
 .nav-icon {
     width: 24px;
     height: 24px;
@@ -39,13 +40,14 @@ main {
 }
 
 #leftContentContainer {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     box-sizing: border-box;
     padding: 0 20px;
-    display: flex;
-    flex-direction: column;
-    transition: width 1s ease;
-    overflow: auto;
+    transition: width 0.5s ease;
+    overflow-x: auto;
+    white-space: nowrap;
 }
 
 #leftContentContainer.givePlaceToRightContent {
@@ -66,6 +68,11 @@ main {
     background-color: #f3f3f3;
 }
 
+#container-enseigne {
+    width: fit-content;
+    min-width: 100%;
+}
+
 .nombre-coiffeur {
     color: #b7b7b7;
     font-size: 14px;
@@ -74,6 +81,7 @@ main {
 }
 
 .enseigne-coiffeur {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -81,6 +89,7 @@ main {
     font-size: 14px;
     border-radius: 5px;
     cursor: pointer;
+    box-sizing: border-box;
 }
 
 .enseigne-coiffeur:hover {
@@ -110,15 +119,15 @@ main {
 }
 
 
-
 .viewDataSheetContainer, .edit-company-container {
     display: table-column;
     overflow: auto;
     width: 0;
-    transition: width 1s ease;
+    transition: width 0.5s ease;
 }
 
 .viewDataSheetContainer.dataSheetOpened, .edit-company-container.dataSheetOpened {
+    white-space: nowrap;
     background-color: #f1f1f1;
     display: table-column;
     overflow: auto;
@@ -147,8 +156,11 @@ main {
 .mapContainer {
     margin-top: 2%;
     height: 60%;
-
+    min-width: 500px;
 }
+
+
+
 
 
 #edit-coiffeur {
@@ -219,7 +231,7 @@ main {
 
 .selected {
     background-color: #7b208f;
-    color:#ffffff;
+    color: #ffffff;
 }
 
 .selected:hover {
