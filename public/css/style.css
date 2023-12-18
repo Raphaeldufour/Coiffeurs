@@ -85,7 +85,7 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 22px;
+    padding: 10px 22px;
     font-size: 14px;
     border-radius: 5px;
     cursor: pointer;
@@ -93,7 +93,7 @@ main {
 }
 
 .enseigne-coiffeur:hover {
-    background-color: #bb48bd;
+    background-color: #a23fa4;
 }
 
 .enseigne-coiffeur:hover .enseigne-coiffeur-info {
@@ -102,7 +102,8 @@ main {
 
 .enseigne-coiffeur-index {
     font-size: 50px;
-    color: #ebebeb;
+    color: #f5f3f5;
+    margin: 0;
 }
 
 #load-more-button {
@@ -230,12 +231,12 @@ main {
 }
 
 .selected {
-    background-color: #7b208f;
+    background-color: #360037;
     color: #ffffff;
 }
 
 .selected:hover {
-    background-color: #7b208f;
+    background-color: #360037;
 }
 
 #isModified {
