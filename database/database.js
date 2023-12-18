@@ -1,6 +1,5 @@
 import fs from 'fs';
 import sqlite3 from 'sqlite3';
-import bcrypt from 'bcrypt';
 
 
 const rawData = fs.readFileSync('coiffeurs.json');
@@ -9,16 +8,6 @@ const jsonData = JSON.parse(rawData);
 
 const db = new sqlite3.Database('database.db');
 
-const saltRounds = 10;
-const email = "username@student.school.us";
-const myPlaintextPassword = 'cisco123';
-
-
-async function hashPassword(password) {
-    const salt = await bcrypt.genSalt(saltRounds);
-    const hash = await bcrypt.hash(password, salt);
-    return {salt, hash};
-}
 
 // Créer une table pour stocker les enseignes de coiffure
 db.serialize(async () => {
@@ -61,16 +50,6 @@ CREATE TABLE IF NOT EXISTS Utilisateurs (
         );
     });
     insertStmt.finalize();
-
-    const insertUserStmt = db.prepare(`INSERT INTO Utilisateurs (
-    email, password
-    ) VALUES (?, ?)`);
-
-    insertUserStmt.run(
-        email,
-        (await hashPassword(myPlaintextPassword)).hash
-    );
-    insertUserStmt.finalize();
 });
 
 db.close();
