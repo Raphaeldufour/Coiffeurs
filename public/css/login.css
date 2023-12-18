@@ -36,6 +36,12 @@ body {
 #password-input{
     margin-bottom: 18px;
 }
+input[type="text"],input[type="password"]{
+    padding: 8px;
+    border: none;
+    background-color: #f2f1f2;
+}
+
 #buttons-container{
     width: 100%;
     display: flex;
