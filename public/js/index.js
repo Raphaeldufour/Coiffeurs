@@ -10,11 +10,19 @@ const addButton = document.getElementById('add-icon');
 
 const leftContentContainer = document.querySelector('#leftContentContainer');
 const currentDataSheetContainer = (localStorage.getItem('isLoggedIn') !== 'true') ? dataSheetViewContainer : dataSheetEditContainer;
+
+if (currentDataSheetContainer === dataSheetViewContainer) {
+    dataSheetEditContainer.remove();
+} else
+{
+    dataSheetViewContainer.remove();
+}
+
 const mapContainer = currentDataSheetContainer.querySelector('.mapContainer');
 const editButton = currentDataSheetContainer.querySelector('#edit-coiffeur-submit');
 const closeButton = currentDataSheetContainer.querySelector('.closeButton');
 const modifLabel = currentDataSheetContainer.querySelector('#isModified');
-
+const loadMoreButton = document.getElementById('load-more-button');
 
 let indexPage = 0;
 let enseignes = [];
@@ -41,8 +49,7 @@ function createMapFor(Lat, Lng) {
 function closeDataSheet() {
     closeButton.classList.remove('stay');
     closeButton.classList.remove('appearing');
-    if (currentDataSheetContainer.classList.contains('dataSheetOpened'))
-    {
+    if (currentDataSheetContainer.classList.contains('dataSheetOpened')) {
         closeButton.classList.add('disappearing');
     }
     currentDataSheetContainer.classList.remove('dataSheetOpened');
@@ -309,7 +316,7 @@ async function loadMoreEnseignes(enseignes) {
 
     console.log(enseignes);
     console.log("enseignes.length" + enseignes.length)
-    renderEnseignes(enseignes, indexPage, indexPage+10);
+    renderEnseignes(enseignes, indexPage, indexPage + 10);
     indexPage = enseignes.length;
     console.log("indexPage :" + indexPage)
 }
@@ -319,26 +326,25 @@ function checkObserver() {
     const options = {
         root: null,
         rootMargin: '0px',
-        threshold: 1.0
+        threshold: 0.5
     };
 
     const observer = new IntersectionObserver(function (entries, observer) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                    loadMoreEnseignes(enseignes);
+                loadMoreEnseignes(enseignes);
             }
         });
     }, options);
 
-    observer.observe(document.getElementById('load-more-button'));
+    observer.observe(loadMoreButton);
 }
 
 async function filterEnseignes() {
     closeDataSheet();
     filter = inputRecherche.value;
     enseignes = [];
-    while (containerEnseigne.firstChild)
-    {
+    while (containerEnseigne.firstChild) {
         containerEnseigne.removeChild(containerEnseigne.firstChild);
     }
     await prepareTenFirstEnseignes();
@@ -386,6 +392,7 @@ function checkLogin() {
 async function init() {
     checkLogin();
     await prepareTenFirstEnseignes();
+    loadMoreButton.addEventListener('click', () => loadMoreEnseignes(enseignes));
     checkObserver();
     inputRecherche.addEventListener('input', filterEnseignes);
 }
@@ -398,7 +405,6 @@ async function prepareTenFirstEnseignes() {
     renderEnseignes(enseignes, indexPage, indexPage + 10);
     indexPage = enseignes.length;
 }
-
 
 
 init();
