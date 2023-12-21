@@ -10,7 +10,8 @@ app.use(bodyParser.json());
 
 const db = new sqlite3.Database('database/database.db');
 
-function dontContainsLetters(str) {
+function dontContainsLetters(str)
+{
     return !/[a-zA-Z]/.test(str);
 }
 

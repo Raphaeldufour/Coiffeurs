@@ -55,10 +55,6 @@ function closeDataSheet() {
     currentDataSheetContainer.classList.remove('dataSheetOpened');
     leftContentContainer.classList.remove('givePlaceToRightContent');
 
-    currentDataSheetContainer.addEventListener('transitionend', (event) => {
-        mapContainer.innerHTML = '';
-    });
-
     let selectedElements = document.querySelectorAll('.selected');
     selectedElements.forEach(element => element.classList.remove('selected'));
 }
@@ -159,7 +155,9 @@ function generateRightContent(enseigne, typeOfDataSheet) {
         editButton.onclick = () => handleEditButtonClick(id, currentInfos, typeOfDataSheet, enseigne);
     }
 
-    updateMapContainer(inRealSwitching, enseigne, mapLat, mapLng);
+
+    updateMap(inRealSwitching, enseigne)
+
 
     leftContentContainer.classList.add('givePlaceToRightContent');
     currentDataSheetContainer.classList.add('dataSheetOpened');
@@ -184,6 +182,21 @@ function getNewInfosFromDataSheet() {
         dataSheetEditContainer.querySelector('#longitudeInput').value
     ];
 }
+
+
+function updateMap(inRealSwitching,enseigne)
+{
+    const mapLat = enseigne.lat;
+    const mapLng = enseigne.lng;
+    if (inRealSwitching === false) {
+        setTimeout(() => {
+            createMapFor(mapLat, mapLng);
+        }, 500);
+    } else {
+        createMapFor(mapLat, mapLng);
+    }
+}
+
 
 function prepareDataForRequest(id, currentInfos, newInfos) {
     return {
@@ -213,6 +226,7 @@ function handleResponse(response, typeOfDataSheet, newInfos, enseigne) {
     if (response.ok) {
         if (typeOfDataSheet === 'edit') {
             updateEnseigneInfos(enseigne, newInfos);
+            updateMap(getSwitchingState(), enseigne);
             editHtmlElement(newInfos, typeOfDataSheet);
         } else if (typeOfDataSheet === 'add') {
             response.json().then(data => {
@@ -235,21 +249,7 @@ function updateEnseigneInfos(enseigne, newInfos) {
     enseigne.lng = newInfos[6];
 }
 
-function updateMapContainer(inRealSwitching, enseigne, mapLat, mapLng) {
-    if (currentDataSheetContainer.classList.contains('dataSheetOpened') && inRealSwitching && enseigne) {
-        createMapFor(mapLat, mapLng);
-    } else {
-        mapContainer.innerHTML = '';
-    }
 
-    currentDataSheetContainer.addEventListener('transitionend', () => {
-        if (currentDataSheetContainer.classList.contains('dataSheetOpened') && enseigne) {
-            createMapFor(mapLat, mapLng);
-        } else {
-            mapContainer.innerHTML = '';
-        }
-    });
-}
 
 async function getHairdressers() {
     const response = await fetch(`/api/enseignes?index=${indexPage}&filter=${filter}`);

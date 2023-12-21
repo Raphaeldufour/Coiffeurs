@@ -161,9 +161,6 @@ main {
 }
 
 
-
-
-
 #editHairdresser {
     margin: 0 10px;
     padding: 37px;
@@ -278,6 +275,5 @@ main {
         transform: scale(0) rotate(-40deg);
     }
 }
-
 
 
