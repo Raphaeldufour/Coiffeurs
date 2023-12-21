@@ -62,11 +62,11 @@ app.get('/api/enseignes', (req, res) => {
 
         db.all('SELECT * FROM enseignes WHERE nom LIKE ? or ville LIKE ? ORDER BY nom LIMIT 10 OFFSET ?', [`%${filter}%`,`%${filter}%`,offset], (err, enseignes) => {
             if (err) {
-                res.status(500).send('Erreur lors de la récupération des enseignes');
+                res.status(500).json({message: 'Erreur lors de la récupération des enseignes'});
             } else {
                 db.get('SELECT COUNT(*) AS count FROM enseignes  WHERE nom LIKE ? or ville LIKE ?',[`%${filter}%`,`%${filter}%`], (err, count) => {
                     if (err) {
-                        res.status(500).send('Erreur lors du compte des enseignes');
+                        res.status(500).json({message: 'Erreur lors de la récupération du nombre d\'enseignes'});
                     } else {
                         const totalNumber = count ? count.count : 0
                          response = {
@@ -78,12 +78,6 @@ app.get('/api/enseignes', (req, res) => {
                 })
             }
         });
-
-
-
-
-
-
     }
 });
 
@@ -117,7 +111,7 @@ app.patch('/api/enseignes', verifyToken, (req, res) => {
 });
 
 
-app.put('/api/enseignes', (req, res) => {
+app.put('/api/enseignes',verifyToken, (req, res) => {
     const data = req.body;
 
     const newInfos = [data.newInfos.nom, data.newInfos.num, data.newInfos.voie, data.newInfos.codepostal, data.newInfos.ville, data.newInfos.lat, data.newInfos.lng];
@@ -157,7 +151,7 @@ app.post('/user', async (req, res) => {
     const passwordBody = req.body.password;
     db.get('SELECT * FROM Utilisateurs WHERE email = ?', [emailBody], async (err, user) => {
         if (err) {
-            res.status(500).send('Erreur lors de la récupération de l\'utilisateur');
+            res.status(500).json({message: 'Erreur lors de la récupération de l\'utilisateur'});
         } else if (user) {
             const passwordCorrect = await bcrypt.compare(passwordBody, user.password);
             if (passwordCorrect) {
@@ -165,7 +159,7 @@ app.post('/user', async (req, res) => {
                 const expirationDate = Date.now() + 3600000;
                 db.run('INSERT INTO Tokens (token, user_id, expirationDate) VALUES (?, ?, ?)', [token, user.id, expirationDate], (err) => {
                     if (err) {
-                        res.status(500).send('Erreur lors de la création du token');
+                        res.status(500).json({message: 'Erreur lors de la création du token'});
                     } else {
                         res.json({token: token});
                     }
@@ -183,20 +177,20 @@ app.post('/user', async (req, res) => {
 function verifyToken(req, res, next) {
     // Récupérer le token de l'en-tête de la requête
     const token = req.headers['authorization'];
-    if (!token) {
-        return res.status(403).send({message: 'No token provided.'});
+    if (token ==='null' || token == null) {
+        res.status(401).json({message: 'Token manquant'})
     }
     db.get('SELECT * FROM Tokens WHERE token = ?', token, (err, token) => {
         if (err) {
-            res.status(500).send('Erreur lors de la récupération du token');
+            res.status(500).json({message: 'Erreur lors de la récupération du token'})
         } else if (token) {
             if (Date.now() > token.expirationDate) {
-                res.status(401).send('Token expiré');
+                res.status(401).json({message: 'Token expiré'})
             } else {
                 next();
             }
         } else {
-            res.status(401).send('Token invalide');
+            res.status(401).json({message: 'Token invalide'})
         }
     });
 }

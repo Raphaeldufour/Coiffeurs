@@ -222,6 +222,7 @@ function prepareDataForRequest(id, currentInfos, newInfos) {
 }
 
 function handleResponse(response, typeOfDataSheet, newInfos, enseigne) {
+    console.log(response);
     if (response.ok) {
         if (typeOfDataSheet === 'edit') {
             updateEnseigneInfos(enseigne, newInfos);
@@ -234,7 +235,15 @@ function handleResponse(response, typeOfDataSheet, newInfos, enseigne) {
             });
         }
     } else {
-        response.json().then(data => alert(data.message));
+        switch (response.status) {
+            case 401:
+                alert('Vous devez être connecté pour modifier une enseigne');
+                window.location.href = '/login.html';
+                break;
+            case 500:
+                alert('Erreur lors de la modification de l\'enseigne');
+                break;
+        }
     }
 }
 
