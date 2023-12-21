@@ -29,6 +29,8 @@ let hairdressers = [];
 let filter = searchInput.value;
 console.log(filter);
 
+let currentInfos = [];
+
 let resp = null;
 
 function createMapFor(Lat, Lng) {
@@ -131,7 +133,7 @@ function fillEditDataSheet(infos, typeOfDataSheet) {
 
 
 function generateRightContent(enseigne, typeOfDataSheet) {
-    let currentInfos = [];
+    currentInfos = [];
     let id = null;
     let inRealSwitching = getSwitchingState();
 
@@ -245,6 +247,8 @@ function updateEnseigneInfos(enseigne, newInfos)
     enseigne.ville = newInfos[4];
     enseigne.lat = newInfos[5];
     enseigne.lng = newInfos[6];
+
+    currentInfos = newInfos;
 }
 
 
