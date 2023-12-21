@@ -20,6 +20,9 @@ function containsDigits(string) {
 }
 
 function okayForEdit(ancientInfos, newInfos) {
+    console.log("anciennes infos : "+ancientInfos);
+    console.log("nouvelles infos : "+newInfos);
+
     let isOkay = true;
     if (
         isNaN(newInfos[1]) || newInfos[1].includes(' ') || newInfos[1] === '' ||

@@ -118,6 +118,7 @@ function fillEditDataSheet(infos, typeOfDataSheet) {
         currentDataSheetContainer.querySelector('#latitudeInput').value = infos[5];
         currentDataSheetContainer.querySelector('#longitudeInput').value = infos[6];
     } else if (typeOfDataSheet === 'add') {
+        mapContainer.innerText = '';
         currentDataSheetContainer.querySelector('#nameInput').value = '';
         currentDataSheetContainer.querySelector('#numberInput').value = '';
         currentDataSheetContainer.querySelector('#streetInput').value = '';
@@ -132,15 +133,12 @@ function fillEditDataSheet(infos, typeOfDataSheet) {
 function generateRightContent(enseigne, typeOfDataSheet) {
     let currentInfos = [];
     let id = null;
-    let mapLat = null;
-    let mapLng = null;
     let inRealSwitching = getSwitchingState();
 
     if (enseigne !== null) {
         currentInfos = [enseigne.nom, enseigne.num, enseigne.voie, enseigne.codepostal, enseigne.ville, enseigne.lat, enseigne.lng];
         id = enseigne.id;
-        mapLat = currentInfos[5];
-        mapLng = currentInfos[6];
+        updateMap(inRealSwitching, enseigne)
     }
 
     closeButton.classList.remove('disappearing', 'appearing');
@@ -156,7 +154,6 @@ function generateRightContent(enseigne, typeOfDataSheet) {
     }
 
 
-    updateMap(inRealSwitching, enseigne)
 
 
     leftContentContainer.classList.add('givePlaceToRightContent');
@@ -239,7 +236,8 @@ function handleResponse(response, typeOfDataSheet, newInfos, enseigne) {
     }
 }
 
-function updateEnseigneInfos(enseigne, newInfos) {
+function updateEnseigneInfos(enseigne, newInfos)
+{
     enseigne.nom = newInfos[0];
     enseigne.num = newInfos[1];
     enseigne.voie = newInfos[2];
