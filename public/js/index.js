@@ -1,12 +1,12 @@
-const templateEnseigne = document.getElementById('template-enseigne');
-const containerEnseigne = document.getElementById('container-enseigne');
-const nombreCoiffeurs = document.getElementById('nombre-coiffeur');
-const inputRecherche = document.getElementById('input-recherche');
-const dataSheetViewContainer = document.querySelector('.viewDataSheetContainer');
-const dataSheetEditContainer = document.querySelector('.edit-company-container');
-const logoutButton = document.getElementById('logout-icon');
-const loginButton = document.getElementById('login-icon');
-const addButton = document.getElementById('add-icon');
+const hairdresserTemplate = document.getElementById('hairdresserTemplate');
+const hairdressersContainer = document.getElementById('hairdressersContainer');
+const numberOfHairdressers = document.getElementById('numberOfHairdressers');
+const searchInput = document.getElementById('searchInput');
+const dataSheetViewContainer = document.querySelector('.viewDatasheetContainer');
+const dataSheetEditContainer = document.querySelector('.editHairdresserContainer');
+const logoutButton = document.getElementById('logoutIcon');
+const loginButton = document.getElementById('loginIcon');
+const addButton = document.getElementById('addIcon');
 
 const leftContentContainer = document.querySelector('#leftContentContainer');
 const currentDataSheetContainer = (localStorage.getItem('isLoggedIn') !== 'true') ? dataSheetViewContainer : dataSheetEditContainer;
@@ -19,14 +19,14 @@ if (currentDataSheetContainer === dataSheetViewContainer) {
 }
 
 const mapContainer = currentDataSheetContainer.querySelector('.mapContainer');
-const editButton = currentDataSheetContainer.querySelector('#edit-coiffeur-submit');
+const editButton = currentDataSheetContainer.querySelector('#hairdresserSubmitButton');
 const closeButton = currentDataSheetContainer.querySelector('.closeButton');
 const modifLabel = currentDataSheetContainer.querySelector('#isModified');
-const loadMoreButton = document.getElementById('load-more-button');
+const loadMoreButton = document.getElementById('loadMoreButton');
 
 let indexPage = 0;
-let enseignes = [];
-let filter = inputRecherche.value;
+let hairdressers = [];
+let filter = searchInput.value;
 console.log(filter);
 
 let resp = null;
@@ -67,9 +67,9 @@ function closeDataSheet() {
 function editHtmlElement(newData, typeOfDataSheet) {
     if (typeOfDataSheet === 'edit') {
         let element = document.querySelector('.selected');
-        element.querySelector('.enseigne-coiffeur-nom').textContent = newData[0];
-        element.querySelector('.enseigne-coiffeur-rue').textContent = newData[1] + ' ' + newData[2];
-        element.querySelector('.enseigne-coiffeur-ville').textContent = newData[3] + ' ' + newData[4];
+        element.querySelector('.hairdresserName').textContent = newData[0];
+        element.querySelector('.hairdresserStreet').textContent = newData[1] + ' ' + newData[2];
+        element.querySelector('.hairdresserCity').textContent = newData[3] + ' ' + newData[4];
         modifLabel.classList.add('showIsModified'); // Ajoute la classe pour montrer lentement le message
 
         setTimeout(() => {
@@ -105,30 +105,30 @@ async function sendModifiedData(data, typeOfDataSheet) {
 
 
 function fillViewDataSheet(infos) {
-    currentDataSheetContainer.querySelector('#valueName').textContent = infos[0];
-    currentDataSheetContainer.querySelector('#valueNumber').textContent = infos[1];
-    currentDataSheetContainer.querySelector('#valueWay').textContent = infos[2];
-    currentDataSheetContainer.querySelector('#valuePostalCode').textContent = infos[3];
-    currentDataSheetContainer.querySelector('#valueCity').textContent = infos[4];
+    currentDataSheetContainer.querySelector('#nameValue').textContent = infos[0];
+    currentDataSheetContainer.querySelector('#numberValue').textContent = infos[1];
+    currentDataSheetContainer.querySelector('#streetValue').textContent = infos[2];
+    currentDataSheetContainer.querySelector('#postalCodeValue').textContent = infos[3];
+    currentDataSheetContainer.querySelector('#cityValue').textContent = infos[4];
 }
 
 function fillEditDataSheet(infos, typeOfDataSheet) {
     if (typeOfDataSheet === 'edit') {
-        currentDataSheetContainer.querySelector('#nom').value = infos[0];
-        currentDataSheetContainer.querySelector('#numero').value = infos[1];
-        currentDataSheetContainer.querySelector('#voie').value = infos[2];
-        currentDataSheetContainer.querySelector('#code-postal').value = infos[3];
-        currentDataSheetContainer.querySelector('#ville').value = infos[4];
-        currentDataSheetContainer.querySelector('#latitude').value = infos[5];
-        currentDataSheetContainer.querySelector('#longitude').value = infos[6];
+        currentDataSheetContainer.querySelector('#nameInput').value = infos[0];
+        currentDataSheetContainer.querySelector('#numberInput').value = infos[1];
+        currentDataSheetContainer.querySelector('#streetInput').value = infos[2];
+        currentDataSheetContainer.querySelector('#postalCodeInput').value = infos[3];
+        currentDataSheetContainer.querySelector('#cityInput').value = infos[4];
+        currentDataSheetContainer.querySelector('#latitudeInput').value = infos[5];
+        currentDataSheetContainer.querySelector('#longitudeInput').value = infos[6];
     } else if (typeOfDataSheet === 'add') {
-        currentDataSheetContainer.querySelector('#nom').value = '';
-        currentDataSheetContainer.querySelector('#numero').value = '';
-        currentDataSheetContainer.querySelector('#voie').value = '';
-        currentDataSheetContainer.querySelector('#code-postal').value = '';
-        currentDataSheetContainer.querySelector('#ville').value = '';
-        currentDataSheetContainer.querySelector('#latitude').value = '';
-        currentDataSheetContainer.querySelector('#longitude').value = '';
+        currentDataSheetContainer.querySelector('#nameInput').value = '';
+        currentDataSheetContainer.querySelector('#numberInput').value = '';
+        currentDataSheetContainer.querySelector('#streetInput').value = '';
+        currentDataSheetContainer.querySelector('#postalCodeInput').value = '';
+        currentDataSheetContainer.querySelector('#cityInput').value = '';
+        currentDataSheetContainer.querySelector('#latitudeInput').value = '';
+        currentDataSheetContainer.querySelector('#longitudeInput').value = '';
     }
 }
 
@@ -175,13 +175,13 @@ function handleEditButtonClick(id, currentInfos, typeOfDataSheet, enseigne) {
 
 function getNewInfosFromDataSheet() {
     return [
-        dataSheetEditContainer.querySelector('#nom').value,
-        dataSheetEditContainer.querySelector('#numero').value,
-        dataSheetEditContainer.querySelector('#voie').value,
-        dataSheetEditContainer.querySelector('#code-postal').value,
-        dataSheetEditContainer.querySelector('#ville').value,
-        dataSheetEditContainer.querySelector('#latitude').value,
-        dataSheetEditContainer.querySelector('#longitude').value
+        dataSheetEditContainer.querySelector('#nameInput').value,
+        dataSheetEditContainer.querySelector('#numberInput').value,
+        dataSheetEditContainer.querySelector('#streetInput').value,
+        dataSheetEditContainer.querySelector('#postalCodeInput').value,
+        dataSheetEditContainer.querySelector('#cityInput').value,
+        dataSheetEditContainer.querySelector('#latitudeInput').value,
+        dataSheetEditContainer.querySelector('#longitudeInput').value
     ];
 }
 
@@ -251,7 +251,7 @@ function updateMapContainer(inRealSwitching, enseigne, mapLat, mapLng) {
     });
 }
 
-async function getEnseignes() {
+async function getHairdressers() {
     const response = await fetch(`/api/enseignes?index=${indexPage}&filter=${filter}`);
     const respJSON = await response.json();
     console.log(respJSON);
@@ -266,9 +266,9 @@ function getSwitchingState() {
     return inSwitching;
 }
 
-function renderEnseigne(enseigne, index) {
-    const clone = templateEnseigne.content.cloneNode(true);
-    const enseigneElement = clone.querySelector('.enseigne-coiffeur');
+function renderHairdresser(enseigne, index) {
+    const clone = hairdresserTemplate.content.cloneNode(true);
+    const enseigneElement = clone.querySelector('.hairdresserCard');
     let typeOfDataSheet = '';
     enseigneElement.addEventListener('click', () => {
             if (localStorage.getItem('isLoggedIn') !== 'true') {
@@ -292,31 +292,31 @@ function renderEnseigne(enseigne, index) {
         }
     )
 
-    clone.querySelector('.enseigne-coiffeur-nom').textContent = enseigne.nom;
+    clone.querySelector('.hairdresserName').textContent = enseigne.nom;
     const numero = enseigne.num ?? '';  //vérifie si num existe, sinon met une chaine vide
-    clone.querySelector('.enseigne-coiffeur-rue').textContent = numero + ' ' + enseigne.voie;
-    clone.querySelector('.enseigne-coiffeur-ville').textContent = enseigne.codepostal + ' ' + enseigne.ville;
-    clone.querySelector('.enseigne-coiffeur-index').textContent = index;
+    clone.querySelector('.hairdresserStreet').textContent = numero + ' ' + enseigne.voie;
+    clone.querySelector('.hairdresserCity').textContent = enseigne.codepostal + ' ' + enseigne.ville;
+    clone.querySelector('.hairdresserIndex').textContent = index;
 
-    containerEnseigne.appendChild(clone);
+    hairdressersContainer.appendChild(clone);
 }
 
-function renderEnseignes(enseignes, startIndex, endIndex) {
+function renderHairdressers(enseignes, startIndex, endIndex) {
     for (let i = startIndex; i < endIndex; i++) {
         if (i < enseignes.length) {
-            renderEnseigne(enseignes[i], i + 1);
+            renderHairdresser(enseignes[i], i + 1);
         }
     }
 }
 
-async function loadMoreEnseignes(enseignes) {
-    let currentResp = await getEnseignes();
+async function loadMoreHairdressers(enseignes) {
+    let currentResp = await getHairdressers();
     let enseignesToAdd = currentResp.enseignes;
     enseignesToAdd.forEach(enseigne => enseignes.push(enseigne));
 
     console.log(enseignes);
     console.log("enseignes.length" + enseignes.length)
-    renderEnseignes(enseignes, indexPage, indexPage + 10);
+    renderHairdressers(enseignes, indexPage, indexPage + 10);
     indexPage = enseignes.length;
     console.log("indexPage :" + indexPage)
 }
@@ -332,7 +332,7 @@ function checkObserver() {
     const observer = new IntersectionObserver(function (entries, observer) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                loadMoreEnseignes(enseignes);
+                loadMoreHairdressers(hairdressers);
             }
         });
     }, options);
@@ -340,26 +340,26 @@ function checkObserver() {
     observer.observe(loadMoreButton);
 }
 
-async function filterEnseignes() {
+async function hairdressersFilter() {
     closeDataSheet();
-    filter = inputRecherche.value;
-    enseignes = [];
-    while (containerEnseigne.firstChild) {
-        containerEnseigne.removeChild(containerEnseigne.firstChild);
+    filter = searchInput.value;
+    hairdressers = [];
+    while (hairdressersContainer.firstChild) {
+        hairdressersContainer.removeChild(hairdressersContainer.firstChild);
     }
-    await prepareTenFirstEnseignes();
+    await prepareTenFirstHairdressers();
     /*
-    const searchValue = inputRecherche.value;
+    const searchValue = searchInput.value;
     enseignes = enseignes.filter(enseigne => {
         const nomLowerCase = enseigne.nom ? enseigne.nom.toLowerCase() : '';
         const villeLowerCase = enseigne.ville ? enseigne.ville.toLowerCase() : '';
         return nomLowerCase.includes(searchValue.toLowerCase())
             || villeLowerCase.includes(searchValue.toLowerCase())
     });
-    nombreCoiffeurs.textContent = enseignes.length.toString();
-    containerEnseigne.innerHTML = '';
+    numberOfHairdressers.textContent = enseignes.length.toString();
+    hairdressersContainer.innerHTML = '';
     indexPage = 10;
-    loadMoreEnseignes(enseignes);
+    loadMoreHairdressers(enseignes);
      */
 }
 
@@ -391,19 +391,19 @@ function checkLogin() {
 
 async function init() {
     checkLogin();
-    await prepareTenFirstEnseignes();
-    loadMoreButton.addEventListener('click', () => loadMoreEnseignes(enseignes));
+    await prepareTenFirstHairdressers();
+    loadMoreButton.addEventListener('click', () => loadMoreHairdressers(hairdressers));
     checkObserver();
-    inputRecherche.addEventListener('input', filterEnseignes);
+    searchInput.addEventListener('input', hairdressersFilter);
 }
 
-async function prepareTenFirstEnseignes() {
+async function prepareTenFirstHairdressers() {
     indexPage = 0;
-    resp = await getEnseignes();
-    enseignes = resp.enseignes;
-    nombreCoiffeurs.textContent = resp.totalNumber.toString();
-    renderEnseignes(enseignes, indexPage, indexPage + 10);
-    indexPage = enseignes.length;
+    resp = await getHairdressers();
+    hairdressers = resp.enseignes;
+    numberOfHairdressers.textContent = resp.totalNumber.toString();
+    renderHairdressers(hairdressers, indexPage, indexPage + 10);
+    indexPage = hairdressers.length;
 }
 
 

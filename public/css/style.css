@@ -5,7 +5,7 @@ html, body {
     font-family: 'Roboto', sans-serif;
 }
 
-.page-container {
+.pageContainer {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -21,12 +21,12 @@ nav {
     color: #ffffff;
 }
 
-.nav-title {
+.navTitle {
     font-size: 18px;
     font-weight: bold;
 }
 
-.nav-icon {
+.navIcon {
     width: 24px;
     height: 24px;
     padding-right: 19px;
@@ -54,12 +54,12 @@ main {
     width: 50%;
 }
 
-#search-container {
+#searchContainer {
     width: 100%;
     margin-top: 20px
 }
 
-#input-recherche {
+#searchInput {
     width: 100%;
     height: 30px;
     border: 0;
@@ -68,19 +68,19 @@ main {
     background-color: #f3f3f3;
 }
 
-#container-enseigne {
+#hairdressersContainer {
     width: fit-content;
     min-width: 100%;
 }
 
-.nombre-coiffeur {
+.numberOfHairdressers {
     color: #b7b7b7;
     font-size: 14px;
     font-style: italic;
     margin-top: 1px;
 }
 
-.enseigne-coiffeur {
+.hairdresserCard {
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -92,21 +92,21 @@ main {
     box-sizing: border-box;
 }
 
-.enseigne-coiffeur:hover {
+.hairdresserCard:hover {
     background-color: #a23fa4;
 }
 
-.enseigne-coiffeur:hover .enseigne-coiffeur-info {
+.hairdresserCard:hover .hairdresserDetails {
     color: white;
 }
 
-.enseigne-coiffeur-index {
+.hairdresserIndex {
     font-size: 50px;
     color: #f5f3f5;
     margin: 0;
 }
 
-#load-more-button {
+#loadMoreButton {
     align-self: center;
     text-align: center;
     width: 131px;
@@ -120,14 +120,14 @@ main {
 }
 
 
-.viewDataSheetContainer, .edit-company-container {
+.viewDatasheetContainer, .editHairdresserContainer {
     display: table-column;
     overflow: auto;
     width: 0;
     transition: width 0.5s ease;
 }
 
-.viewDataSheetContainer.dataSheetOpened, .edit-company-container.dataSheetOpened {
+.viewDatasheetContainer.dataSheetOpened, .editHairdresserContainer.dataSheetOpened {
     white-space: nowrap;
     background-color: #f1f1f1;
     display: table-column;
@@ -141,7 +141,7 @@ main {
 }
 
 
-#valueName {
+#nameValue {
     font-weight: bold;
 }
 
@@ -164,7 +164,7 @@ main {
 
 
 
-#edit-coiffeur {
+#editHairdresser {
     margin: 0 10px;
     padding: 37px;
     background-color: white;
@@ -172,7 +172,7 @@ main {
     flex-direction: column;
 }
 
-#edit-coiffeur input {
+#editHairdresser input {
 
     margin: 10px 0;
     padding: 5px 5px 5px 10px;
@@ -180,7 +180,7 @@ main {
     border: 0;
 }
 
-#edit-coiffeur button {
+#editHairdresser button {
     width: 150px;
     height: 40px;
     border: none;

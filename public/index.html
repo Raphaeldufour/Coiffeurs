@@ -9,74 +9,74 @@
     <script src="js/index.js" defer></script>
 </head>
 <body>
-<div class="page-container">
+<div class="pageContainer">
     <nav>
-        <p class="nav-title">Coiff'EUR</p>
-        <div class="buttons-container">
-            <img id="add-icon" class="nav-icon" src="img/addperson.svg" alt="add">
-            <img id="logout-icon" class="nav-icon" src="img/logout.svg" alt="edit">
-            <img id="login-icon" class="nav-icon" src="img/login.svg" alt="edit">
+        <p class="navTitle">Coiff'EUR</p>
+        <div class="buttonsContainer">
+            <img id="addIcon" class="navIcon" src="img/addperson.svg" alt="add">
+            <img id="logoutIcon" class="navIcon" src="img/logout.svg" alt="edit">
+            <img id="loginIcon" class="navIcon" src="img/login.svg" alt="edit">
         </div>
     </nav>
     <main>
         <div id="leftContentContainer">
-            <div id="search-container">
-                <input type="text" id="input-recherche" placeholder="Rechercher...">
-                <p class="nombre-coiffeur"><span id="nombre-coiffeur"></span> coiffeurs trouvés</p>
+            <div id="searchContainer">
+                <input type="text" id="searchInput" placeholder="Rechercher...">
+                <p class="numberOfHairdressers"><span id="numberOfHairdressers"></span> coiffeurs trouvés</p>
             </div>
-            <div id="container-enseigne">
+            <div id="hairdressersContainer">
             </div>
-            <div id="load-more-button">Charger plus...</div>
+            <div id="loadMoreButton">Charger plus...</div>
         </div>
-        <div class='viewDataSheetContainer'>
+        <div class='viewDatasheetContainer'>
             <div class="closeButtonContainer">
                 <button class="closeButton">X</button>
             </div>
             <table id='dataSheetTable'>
-                <tr id="rowName">
+                <tr>
                     <td class="labelCell">Nom</td>
-                    <td id="valueName"></td>
+                    <td id="nameValue"></td>
                 </tr>
                 <tr>
                     <td class="labelCell">Numéro</td>
-                    <td id="valueNumber"></td>
+                    <td id="numberValue"></td>
                 </tr>
                 <tr>
                     <td class="labelCell">Voie</td>
-                    <td id="valueWay"></td>
+                    <td id="streetValue"></td>
                 </tr>
                 <tr>
                     <td class="labelCell">Code postal</td>
-                    <td id="valuePostalCode"></td>
+                    <td id="postalCodeValue"></td>
                 </tr>
                 <tr>
                     <td class="labelCell">Ville</td>
-                    <td id="valueCity"></td>
+                    <td id="cityValue"></td>
                 </tr>
             </table>
             <div class="mapContainer">
             </div>
         </div>
-        <div class="edit-company-container">
+        <div class="editHairdresserContainer">
             <div class="closeButtonContainer">
                 <button class="closeButton">X</button>
             </div>
-            <div id="edit-coiffeur">
-                <label for="nom">Nom</label>
-                <input type="text" id="nom" name="nom" value="">
-                <label for="numero">Numéro</label>
-                <input type="text" id="numero" name="rue" value="">
-                <label for="voie">Voie</label>
-                <input type="text" id="voie" name="voie" value="">
-                <label for="code-postal">Code postal</label>
-                <input type="text" id="code-postal" name="code-postal" value="">
-                <label for="ville">Ville</label>
-                <input type="text" id="ville" name="ville" value="">
-                <label for="latitude">latitude</label>
-                <input type="text" id="latitude" name="latitude" value="">
-                <label for="longitude">longitude</label>
-                <input type="text" id="longitude" name="longitude" value="">
-                <button id="edit-coiffeur-submit">Enregistrer</button>
+            <div id="editHairdresser">
+                <label for="nameInput">Nom</label>
+                <input type="text" id="nameInput" name="nom" value="">
+                <label for="numberInput">Numéro</label>
+                <input type="text" id="numberInput" name="rue" value="">
+                <label for="streetInput">Voie</label>
+                <input type="text" id="streetInput" name="voie" value="">
+                <label for="postalCodeInput">Code postal</label>
+                <input type="text" id="postalCodeInput" name="code-postal" value="">
+                <label for="cityInput">Ville</label>
+                <input type="text" id="cityInput" name="ville" value="">
+                <label for="latitudeInput">latitude</label>
+                <input type="text" id="latitudeInput" name="latitude" value="">
+                <label for="longitudeInput">longitude</label>
+                <input type="text" id="longitudeInput" name="longitude" value="">
+                <button id="hairdresserSubmitButton">Enregistrer</button>
                 <label id="isModified">Enseigne modifiée avec succès</label>
             </div>
             <div class="mapContainer">
@@ -86,14 +86,14 @@
 </div>
 
 
-<template id="template-enseigne">
-    <div class="enseigne-coiffeur">
-        <div class="enseigne-coiffeur-info">
-            <p class="enseigne-coiffeur-nom"></p>
-            <p class="enseigne-coiffeur-rue"></p>
-            <p class="enseigne-coiffeur-ville"></p>
+<template id="hairdresserTemplate">
+    <div class="hairdresserCard">
+        <div class="hairdresserDetails">
+            <p class="hairdresserName"></p>
+            <p class="hairdresserStreet"></p>
+            <p class="hairdresserCity"></p>
         </div>
-        <p class="enseigne-coiffeur-index"></p>
+        <p class="hairdresserIndex"></p>
     </div>
 </template>
 </body>
