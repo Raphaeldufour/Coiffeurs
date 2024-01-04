@@ -134,16 +134,16 @@ function fillEditDataSheet(infos, typeOfDataSheet) {
 function generateRightContent(enseigne, typeOfDataSheet) {
     currentInfos = [];
     let id = null;
-    let inRealSwitching = getSwitchingState();
+    let inSwitching = getSwitchingState();
 
     if (enseigne !== null) {
         currentInfos = [enseigne.nom, enseigne.num, enseigne.voie, enseigne.codepostal, enseigne.ville, enseigne.lat, enseigne.lng];
         id = enseigne.id;
-        updateMap(inRealSwitching, enseigne)
+        updateMap(inSwitching, enseigne)
     }
 
     closeButton.classList.remove('disappearing', 'appearing');
-    closeButton.classList.add(inRealSwitching ? 'stay' : 'appearing');
+    closeButton.classList.add(inSwitching ? 'stay' : 'appearing');
 
     closeButton.addEventListener('click', closeDataSheet);
 
@@ -180,10 +180,10 @@ function getNewInfosFromDataSheet() {
 }
 
 
-function updateMap(inRealSwitching, enseigne) {
+function updateMap(inSwitching, enseigne) {
     const mapLat = enseigne.lat;
     const mapLng = enseigne.lng;
-    if (inRealSwitching === false) {
+    if (inSwitching === false) {
         setTimeout(() => {
             createMapFor(mapLat, mapLng);
         }, 500);
