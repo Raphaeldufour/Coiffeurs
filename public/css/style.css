@@ -264,6 +264,17 @@ main {
     display: none;
 }
 
+@media only screen and (max-width: 1000px) {
+    .viewDatasheetContainer.dataSheetOpened,.editHairdresserContainer.dataSheetOpened {
+        width: 80%;
+    }
+
+    #leftContentContainer.givePlaceToRightContent {
+        width:20%;
+    }
+
+}
+
 
 @keyframes appearing {
     from {
