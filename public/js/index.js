@@ -337,9 +337,7 @@ async function hairdressersFilter() {
     closeDataSheet();
     filter = searchInput.value;
     hairdressers = [];
-    while (hairdressersContainer.firstChild) {
-        hairdressersContainer.removeChild(hairdressersContainer.firstChild);
-    }
+    hairdressersContainer.innerHTML = '';
     await prepareTenFirstHairdressers();
     /*
     const searchValue = searchInput.value;
@@ -387,7 +385,9 @@ async function init() {
     await prepareTenFirstHairdressers();
     loadMoreButton.addEventListener('click', () => loadMoreHairdressers(hairdressers));
     checkObserver();
-    searchInput.addEventListener('input', hairdressersFilter);
+    searchInput.addEventListener('input', () => {
+        setTimeout(hairdressersFilter, 10)
+    });
 }
 
 async function prepareTenFirstHairdressers() {
