@@ -13,8 +13,7 @@ const currentDataSheetContainer = (localStorage.getItem('isLoggedIn') !== 'true'
 
 if (currentDataSheetContainer === dataSheetViewContainer) {
     dataSheetEditContainer.remove();
-} else
-{
+} else {
     dataSheetViewContainer.remove();
 }
 
@@ -82,10 +81,10 @@ async function sendModifiedData(data, typeOfDataSheet) {
     console.log(typeOfDataSheet);
     switch (typeOfDataSheet) {
         case 'edit':
-            method = 'PATCH';
+            method = 'PUT';
             break;
         case 'add':
-            method = 'PUT';
+            method = 'POST';
             break;
     }
 
@@ -156,15 +155,13 @@ function generateRightContent(enseigne, typeOfDataSheet) {
     }
 
 
-
-
     leftContentContainer.classList.add('givePlaceToRightContent');
     currentDataSheetContainer.classList.add('dataSheetOpened');
 }
 
 function handleEditButtonClick(id, currentInfos, typeOfDataSheet, enseigne) {
     let newInfos = getNewInfosFromDataSheet();
-    const data = prepareDataForRequest(id, currentInfos, newInfos);
+    const data = prepareDataForRequest(id, newInfos);
     const resp = sendModifiedData(data, typeOfDataSheet);
 
     resp.then(response => handleResponse(response, typeOfDataSheet, newInfos, enseigne));
@@ -183,8 +180,7 @@ function getNewInfosFromDataSheet() {
 }
 
 
-function updateMap(inRealSwitching,enseigne)
-{
+function updateMap(inRealSwitching, enseigne) {
     const mapLat = enseigne.lat;
     const mapLng = enseigne.lng;
     if (inRealSwitching === false) {
@@ -197,18 +193,9 @@ function updateMap(inRealSwitching,enseigne)
 }
 
 
-function prepareDataForRequest(id, currentInfos, newInfos) {
+function prepareDataForRequest(id, newInfos) {
     return {
         id: id,
-        ancientInfos: {
-            nom: currentInfos[0],
-            num: currentInfos[1],
-            voie: currentInfos[2],
-            codepostal: currentInfos[3],
-            ville: currentInfos[4],
-            lat: currentInfos[5],
-            lng: currentInfos[6]
-        },
         newInfos: {
             nom: newInfos[0],
             num: newInfos[1],
@@ -235,20 +222,16 @@ function handleResponse(response, typeOfDataSheet, newInfos, enseigne) {
             });
         }
     } else {
-        switch (response.status) {
-            case 401:
-                alert('Vous devez être connecté pour modifier une enseigne');
+        response.json().then(data => {
+            alert(data.message);
+            if (data.message === 'Token invalide') {
                 window.location.href = '/login.html';
-                break;
-            case 500:
-                alert('Erreur lors de la modification de l\'enseigne');
-                break;
-        }
+            }
+        });
     }
 }
 
-function updateEnseigneInfos(enseigne, newInfos)
-{
+function updateEnseigneInfos(enseigne, newInfos) {
     enseigne.nom = newInfos[0];
     enseigne.num = newInfos[1];
     enseigne.voie = newInfos[2];
@@ -259,7 +242,6 @@ function updateEnseigneInfos(enseigne, newInfos)
 
     currentInfos = newInfos;
 }
-
 
 
 async function getHairdressers() {
