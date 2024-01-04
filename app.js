@@ -10,8 +10,7 @@ app.use(bodyParser.json());
 
 const db = new sqlite3.Database('database/database.db');
 
-function dontContainsLetters(str)
-{
+function dontContainsLetters(str) {
     return !/[a-zA-Z]/.test(str);
 }
 
@@ -19,9 +18,8 @@ function containsDigits(string) {
     return /\d/.test(string);
 }
 
-function okayForEdit(ancientInfos, newInfos) {
-    console.log("anciennes infos : "+ancientInfos);
-    console.log("nouvelles infos : "+newInfos);
+function okayForEdit(newInfos) {
+    console.log(newInfos);
 
     let isOkay = true;
     if (
@@ -37,15 +35,6 @@ function okayForEdit(ancientInfos, newInfos) {
         dontContainsLetters(newInfos[4]) || containsDigits(newInfos[4])
     ) {
         isOkay = false;
-    } else if (ancientInfos !== null) {
-        for (let i = 0; i < newInfos.length; i++) {
-            if (newInfos[i].toString() !== ancientInfos[i].toString()) {
-                isOkay = true
-                break;
-            } else {
-                isOkay = false;
-            }
-        }
     }
     return isOkay;
 }
@@ -53,23 +42,22 @@ function okayForEdit(ancientInfos, newInfos) {
 
 app.get('/api/enseignes', (req, res) => {
     let filter = req.query.filter;
-    console.log("filtre courant= "+filter);
-    if(req.query.index)
-    {
+    console.log("filtre courant= " + filter);
+    if (req.query.index) {
         let response = {};
         console.log(req.query.index);
         let offset = parseInt(req.query.index);
 
-        db.all('SELECT * FROM enseignes WHERE nom LIKE ? or ville LIKE ? ORDER BY nom LIMIT 10 OFFSET ?', [`%${filter}%`,`%${filter}%`,offset], (err, enseignes) => {
+        db.all('SELECT * FROM enseignes WHERE nom LIKE ? or ville LIKE ? ORDER BY nom LIMIT 10 OFFSET ?', [`%${filter}%`, `%${filter}%`, offset], (err, enseignes) => {
             if (err) {
                 res.status(500).json({message: 'Erreur lors de la récupération des enseignes'});
             } else {
-                db.get('SELECT COUNT(*) AS count FROM enseignes  WHERE nom LIKE ? or ville LIKE ?',[`%${filter}%`,`%${filter}%`], (err, count) => {
+                db.get('SELECT COUNT(*) AS count FROM enseignes  WHERE nom LIKE ? or ville LIKE ?', [`%${filter}%`, `%${filter}%`], (err, count) => {
                     if (err) {
                         res.status(500).json({message: 'Erreur lors de la récupération du nombre d\'enseignes'});
                     } else {
                         const totalNumber = count ? count.count : 0
-                         response = {
+                        response = {
                             enseignes: enseignes,
                             totalNumber: totalNumber // count est un objet avec une propriété count
                         };
@@ -81,13 +69,12 @@ app.get('/api/enseignes', (req, res) => {
     }
 });
 
-app.patch('/api/enseignes', verifyToken, (req, res) => {
+app.put('/api/enseignes', verifyToken, (req, res) => {
     const data = req.body;
     const id = data.id;
-    const ancientInfos = [data.ancientInfos.nom, data.ancientInfos.num, data.ancientInfos.voie, data.ancientInfos.codepostal, data.ancientInfos.ville, data.ancientInfos.lat, data.ancientInfos.lng];
     const newInfos = [data.newInfos.nom, data.newInfos.num, data.newInfos.voie, data.newInfos.codepostal, data.newInfos.ville, data.newInfos.lat, data.newInfos.lng];
 
-    if (okayForEdit(ancientInfos, newInfos)) {
+    if (okayForEdit(newInfos)) {
 
         const name = newInfos[0];
         const num = newInfos[1];
@@ -111,12 +98,12 @@ app.patch('/api/enseignes', verifyToken, (req, res) => {
 });
 
 
-app.put('/api/enseignes',verifyToken, (req, res) => {
+app.post('/api/enseignes', verifyToken, (req, res) => {
     const data = req.body;
 
     const newInfos = [data.newInfos.nom, data.newInfos.num, data.newInfos.voie, data.newInfos.codepostal, data.newInfos.ville, data.newInfos.lat, data.newInfos.lng];
 
-    if (okayForEdit(null, newInfos)) {
+    if (okayForEdit(newInfos)) {
         const name = newInfos[0];
         const num = newInfos[1];
         const voie = newInfos[2];
@@ -156,7 +143,7 @@ app.post('/user', async (req, res) => {
             const passwordCorrect = await bcrypt.compare(passwordBody, user.password);
             if (passwordCorrect) {
                 const token = randomstring.generate();
-                const expirationDate = Date.now() + 3600000;
+                const expirationDate = Date.now() + 86400000;
                 db.run('INSERT INTO Tokens (token, user_id, expirationDate) VALUES (?, ?, ?)', [token, user.id, expirationDate], (err) => {
                     if (err) {
                         res.status(500).json({message: 'Erreur lors de la création du token'});
@@ -177,7 +164,7 @@ app.post('/user', async (req, res) => {
 function verifyToken(req, res, next) {
     // Récupérer le token de l'en-tête de la requête
     const token = req.headers['authorization'];
-    if (token ==='null' || token == null) {
+    if (token === 'null' || token == null) {
         res.status(401).json({message: 'Token manquant'})
     }
     db.get('SELECT * FROM Tokens WHERE token = ?', token, (err, token) => {
