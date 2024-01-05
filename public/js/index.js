@@ -361,7 +361,6 @@ function checkLogin() {
         loginButton.classList.add('hidden');
         logoutButton.addEventListener('click', () => {
                 localStorage.removeItem('token');
-                localStorage.removeItem('user_id');
                 localStorage.setItem('isLoggedIn', 'false');
                 window.location.reload();
             }

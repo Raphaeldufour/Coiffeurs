@@ -116,7 +116,7 @@ app.post('/api/enseignes', verifyToken, (req, res) => {
             if (err) {
                 res.status(500).json({message: 'Erreur lors de la création de l\'enseigne'});
             } else {
-                res.json({message: 'Enseigne créée avec succès'});
+                res.json({message: 'Coiffeur ajouté'});
             }
         });
     } else {

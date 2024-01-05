@@ -198,6 +198,7 @@ main {
 
 
 #editHairdresser {
+    margin:20px 0;
     padding: 37px;
     background-color: white;
     display: flex;
@@ -275,12 +276,13 @@ main {
 }
 
 #isModified {
-    color: #808080FF;
+    color: #323435;
     text-align: center;
     font-style: oblique;
     height: 0;
     overflow: hidden;
     transition: height 1s ease;
+    font-size: 17px;
 }
 
 #isModified.showIsModified {
