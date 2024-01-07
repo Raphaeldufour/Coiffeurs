@@ -237,7 +237,6 @@ function updateEnseigneInfos(enseigne, newInfos) {
 async function getHairdressers() {
     const response = await fetch(`/api/enseignes?index=${indexPage}&filter=${filter}`);
     const respJSON = await response.json();
-    console.log(respJSON);
     return respJSON;
 }
 
