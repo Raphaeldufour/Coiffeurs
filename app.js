@@ -39,30 +39,20 @@ function okayForEdit(newInfos) {
 
 
 app.get('/api/enseignes', (req, res) => {
-    let filter = req.query.filter;
-    if (req.query.index) {
-        let response = {};
-        let offset = parseInt(req.query.index);
-
-        db.all('SELECT * FROM enseignes WHERE nom LIKE ? or ville LIKE ? ORDER BY nom LIMIT 10 OFFSET ?', [`%${filter}%`, `%${filter}%`, offset], (err, enseignes) => {
-            if (err) {
-                res.status(500).json({message: 'Erreur lors de la récupération des enseignes'});
-            } else {
-                db.get('SELECT COUNT(*) AS count FROM enseignes  WHERE nom LIKE ? or ville LIKE ?', [`%${filter}%`, `%${filter}%`], (err, count) => {
-                    if (err) {
-                        res.status(500).json({message: 'Erreur lors de la récupération du nombre d\'enseignes'});
-                    } else {
-                        const totalNumber = count ? count.count : 0
-                        response = {
-                            enseignes: enseignes,
-                            totalNumber: totalNumber // count est un objet avec une propriété count
-                        };
-                        res.json(response);
-                    }
-                })
-            }
+    const filter = req.query.filter || '';
+    const offset = parseInt(req.query.index) || 0;
+    db.all('SELECT * FROM enseignes WHERE nom LIKE ? or ville LIKE ? ORDER BY nom LIMIT 10 OFFSET ?', [`%${filter}%`, `%${filter}%`, offset], (err, enseignes) => {
+        if (err)
+            return res.status(500).json({message: 'Erreur lors de la récupération des enseignes'});
+        db.get('SELECT COUNT(*) AS count FROM enseignes  WHERE nom LIKE ? or ville LIKE ?', [`%${filter}%`, `%${filter}%`], (err, count) => {
+            if (err)
+                return res.status(500).json({message: 'Erreur lors de la récupération du nombre d\'enseignes'});
+            res.json({
+                enseignes: enseignes,
+                totalNumber: count ? count.count : 0
+            });
         });
-    }
+    });
 });
 
 app.put('/api/enseignes', verifyToken, (req, res) => {
