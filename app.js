@@ -161,19 +161,19 @@ function verifyToken(req, res, next) {
     // Récupérer le token de l'en-tête de la requête
     const token = req.headers['authorization'];
     if (token === 'null' || token == null) {
-        res.status(401).json({message: 'Token manquant'})
+        return res.status(401).json({message: 'Token manquant'})
     }
     db.get('SELECT * FROM Tokens WHERE token = ?', token, (err, token) => {
         if (err) {
-            res.status(500).json({message: 'Erreur lors de la récupération du token'})
+            return res.status(500).json({message: 'Erreur lors de la récupération du token'})
         } else if (token) {
             if (Date.now() > token.expirationDate) {
-                res.status(401).json({message: 'Token expiré'})
+                return res.status(401).json({message: 'Token expiré'})
             } else {
                 next();
             }
         } else {
-            res.status(401).json({message: 'Token invalide'})
+            return res.status(401).json({message: 'Token invalide'})
         }
     });
 }
