@@ -38,24 +38,24 @@ function okayForEdit(newInfos) {
 }
 
 
-app.get('/api/enseignes', (req, res) => {
+app.get('/api/hairdressers', (req, res) => {
     const filter = req.query.filter || '';
     const offset = parseInt(req.query.index) || 0;
-    db.all('SELECT * FROM enseignes WHERE nom LIKE ? or ville LIKE ? ORDER BY nom LIMIT 10 OFFSET ?', [`%${filter}%`, `%${filter}%`, offset], (err, enseignes) => {
+    db.all('SELECT * FROM Coiffeurs WHERE nom LIKE ? or ville LIKE ? ORDER BY nom LIMIT 10 OFFSET ?', [`%${filter}%`, `%${filter}%`, offset], (err, hairdressers) => {
         if (err)
-            return res.status(500).json({message: 'Erreur lors de la récupération des enseignes'});
-        db.get('SELECT COUNT(*) AS count FROM enseignes  WHERE nom LIKE ? or ville LIKE ?', [`%${filter}%`, `%${filter}%`], (err, count) => {
+            return res.status(500).json({message: 'Erreur lors de la récupération des coiffeurs'});
+        db.get('SELECT COUNT(*) AS count FROM Coiffeurs  WHERE nom LIKE ? or ville LIKE ?', [`%${filter}%`, `%${filter}%`], (err, count) => {
             if (err)
-                return res.status(500).json({message: 'Erreur lors de la récupération du nombre d\'enseignes'});
+                return res.status(500).json({message: 'Erreur lors de la récupération du nombre de coiffeurs'});
             res.json({
-                enseignes: enseignes,
+                hairdressers: hairdressers,
                 totalNumber: count ? count.count : 0
             });
         });
     });
 });
 
-app.put('/api/enseignes', verifyToken, (req, res) => {
+app.put('/api/hairdressers', verifyToken, (req, res) => {
     const data = req.body;
     const id = data.id;
     const newInfos = [data.newInfos.nom, data.newInfos.num, data.newInfos.voie, data.newInfos.codepostal, data.newInfos.ville, data.newInfos.lat, data.newInfos.lng];
@@ -70,12 +70,12 @@ app.put('/api/enseignes', verifyToken, (req, res) => {
         const lat = newInfos[5];
         const lng = newInfos[6];
 
-        db.run('UPDATE enseignes SET nom = ?, lat = ?, lng = ?, num = ?, voie = ?, ville = ?, codepostal = ? WHERE id = ?', [name, lat, lng, num, voie, ville, codepostal, id], (err) => {
+        db.run('UPDATE Coiffeurs SET nom = ?, lat = ?, lng = ?, num = ?, voie = ?, ville = ?, codepostal = ? WHERE id = ?', [name, lat, lng, num, voie, ville, codepostal, id], (err) => {
             if (err) {
-                res.status(500).json({message: 'Erreur lors de la modification de l\'enseigne'});
+                res.status(500).json({message: 'Erreur lors de la modification du coiffeur'});
             } else {
 
-                res.json({message: 'Enseigne modifiée avec succès'});
+                res.json({message: 'Coiffeur modifié avec succès'});
             }
         });
     } else {
@@ -84,7 +84,7 @@ app.put('/api/enseignes', verifyToken, (req, res) => {
 });
 
 
-app.post('/api/enseignes', verifyToken, (req, res) => {
+app.post('/api/hairdressers', verifyToken, (req, res) => {
     const data = req.body;
 
     const newInfos = [data.newInfos.nom, data.newInfos.num, data.newInfos.voie, data.newInfos.codepostal, data.newInfos.ville, data.newInfos.lat, data.newInfos.lng];
@@ -98,9 +98,9 @@ app.post('/api/enseignes', verifyToken, (req, res) => {
         const lat = newInfos[5];
         const lng = newInfos[6];
 
-        db.run('INSERT INTO enseignes (nom, lat, lng, num, voie, ville, codepostal) VALUES (?, ?, ?, ?, ?, ?, ?)', [name, lat, lng, num, voie, ville, codepostal], (err) => {
+        db.run('INSERT INTO Coiffeurs (nom, lat, lng, num, voie, ville, codepostal) VALUES (?, ?, ?, ?, ?, ?, ?)', [name, lat, lng, num, voie, ville, codepostal], (err) => {
             if (err) {
-                res.status(500).json({message: 'Erreur lors de la création de l\'enseigne'});
+                res.status(500).json({message: 'Erreur lors de la création du coiffeur'});
             } else {
                 res.json({message: 'Coiffeur ajouté'});
             }

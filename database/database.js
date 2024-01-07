@@ -11,8 +11,13 @@ const db = new sqlite3.Database('database.db');
 
 // Créer une table pour stocker les enseignes de coiffure
 db.serialize(async () => {
+
+    db.run('DROP TABLE IF EXISTS hairdressers');
+
+    db.run('DROP TABLE IF EXISTS Coiffeurs');
+
     db.run(` 
- CREATE TABLE IF NOT EXISTS enseignes (
+ CREATE TABLE IF NOT EXISTS Coiffeurs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nom VARCHAR(30),
     lat Decimal(8,6),
@@ -33,7 +38,7 @@ CREATE TABLE IF NOT EXISTS Utilisateurs (
 
 
     // Insérer les données du fichier JSON dans la table
-    const insertStmt = db.prepare(`INSERT INTO enseignes (
+    const insertStmt = db.prepare(`INSERT INTO Coiffeurs (
     nom, lat, lng, num, voie, ville, codepostal
   ) VALUES (?, ?, ?, ?, ?, ?, ?)`);
 

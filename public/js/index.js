@@ -85,7 +85,7 @@ async function sendModifiedData(data, typeOfDataSheet) {
             method = 'POST';
             break;
     }
-    const response = await fetch('api/enseignes', {
+    const response = await fetch('api/hairdressers', {
         method: method,
         headers: {
             'Content-Type': 'application/json',
@@ -127,14 +127,14 @@ function fillEditDataSheet(infos, typeOfDataSheet) {
 }
 
 
-function generateRightContent(enseigne, typeOfDataSheet) {
+function generateRightContent(hairdresser, typeOfDataSheet) {
     currentInfos = [];
     let id = null;
     let inSwitching = getSwitchingState();
-    if (enseigne !== null) {
-        currentInfos = [enseigne.nom, enseigne.num, enseigne.voie, enseigne.codepostal, enseigne.ville, enseigne.lat, enseigne.lng];
-        id = enseigne.id;
-        updateMap(inSwitching, enseigne)
+    if (hairdresser !== null) {
+        currentInfos = [hairdresser.nom, hairdresser.num, hairdresser.voie, hairdresser.codepostal, hairdresser.ville, hairdresser.lat, hairdresser.lng];
+        id = hairdresser.id;
+        updateMap(inSwitching, hairdresser)
     }
     closeButton.classList.remove('disappearing', 'appearing');
     closeButton.classList.add(inSwitching ? 'stay' : 'appearing');
@@ -144,18 +144,18 @@ function generateRightContent(enseigne, typeOfDataSheet) {
         fillViewDataSheet(currentInfos);
     } else {
         fillEditDataSheet(currentInfos, typeOfDataSheet);
-        editButton.onclick = () => handleEditButtonClick(id, currentInfos, typeOfDataSheet, enseigne);
+        editButton.onclick = () => handleEditButtonClick(id, currentInfos, typeOfDataSheet, hairdresser);
     }
     leftContentContainer.classList.add('givePlaceToRightContent');
     currentDataSheetContainer.classList.add('dataSheetOpened');
 }
 
-function handleEditButtonClick(id, currentInfos, typeOfDataSheet, enseigne) {
+function handleEditButtonClick(id, currentInfos, typeOfDataSheet, hairdresser) {
     let newInfos = getNewInfosFromDataSheet();
     const data = prepareDataForRequest(id, newInfos);
     const resp = sendModifiedData(data, typeOfDataSheet);
 
-    resp.then(response => handleResponse(response, typeOfDataSheet, newInfos, enseigne));
+    resp.then(response => handleResponse(response, typeOfDataSheet, newInfos, hairdresser));
 }
 
 function getNewInfosFromDataSheet() {
@@ -171,9 +171,9 @@ function getNewInfosFromDataSheet() {
 }
 
 
-function updateMap(inSwitching, enseigne) {
-    const mapLat = enseigne.lat;
-    const mapLng = enseigne.lng;
+function updateMap(inSwitching, hairdresser) {
+    const mapLat = hairdresser.lat;
+    const mapLng = hairdresser.lng;
     if (inSwitching === false) {
         setTimeout(() => {
             createMapFor(mapLat, mapLng);
@@ -199,11 +199,11 @@ function prepareDataForRequest(id, newInfos) {
     };
 }
 
-function handleResponse(response, typeOfDataSheet, newInfos, enseigne) {
+function handleResponse(response, typeOfDataSheet, newInfos, hairdresser) {
     if (response.ok) {
         if (typeOfDataSheet === 'edit') {
-            updateEnseigneInfos(enseigne, newInfos);
-            updateMap(getSwitchingState(), enseigne);
+            updateHairdresserInfos(hairdresser, newInfos);
+            updateMap(getSwitchingState(), hairdresser);
             editHtmlElement(newInfos, typeOfDataSheet);
         } else if (typeOfDataSheet === 'add') {
             response.json().then(data => {
@@ -221,21 +221,21 @@ function handleResponse(response, typeOfDataSheet, newInfos, enseigne) {
     }
 }
 
-function updateEnseigneInfos(enseigne, newInfos) {
-    enseigne.nom = newInfos[0];
-    enseigne.num = newInfos[1];
-    enseigne.voie = newInfos[2];
-    enseigne.codepostal = newInfos[3];
-    enseigne.ville = newInfos[4];
-    enseigne.lat = newInfos[5];
-    enseigne.lng = newInfos[6];
+function updateHairdresserInfos(hairdresser, newInfos) {
+    hairdresser.nom = newInfos[0];
+    hairdresser.num = newInfos[1];
+    hairdresser.voie = newInfos[2];
+    hairdresser.codepostal = newInfos[3];
+    hairdresser.ville = newInfos[4];
+    hairdresser.lat = newInfos[5];
+    hairdresser.lng = newInfos[6];
 
     currentInfos = newInfos;
 }
 
 
 async function getHairdressers() {
-    const response = await fetch(`/api/enseignes?index=${indexPage}&filter=${filter}`);
+    const response = await fetch(`/api/hairdressers?index=${indexPage}&filter=${filter}`);
     const respJSON = await response.json();
     return respJSON;
 }
@@ -248,49 +248,49 @@ function getSwitchingState() {
     return inSwitching;
 }
 
-function renderHairdresser(enseigne, index) {
+function renderHairdresser(hairdresser, index) {
     const clone = hairdresserTemplate.content.cloneNode(true);
-    const enseigneElement = clone.querySelector('.hairdresserCard');
+    const hairdresserElement = clone.querySelector('.hairdresserCard');
     let typeOfDataSheet = '';
-    enseigneElement.addEventListener('click', () => {
+    hairdresserElement.addEventListener('click', () => {
             if (localStorage.getItem('isLoggedIn') !== 'true') {
                 typeOfDataSheet = 'view';
             } else {
                 typeOfDataSheet = 'edit';
             }
-            if (enseigneElement.classList.contains('selected')) {
+            if (hairdresserElement.classList.contains('selected')) {
                 closeDataSheet();
-                enseigneElement.classList.remove('selected');
+                hairdresserElement.classList.remove('selected');
             } else {
                 let selectedElements = document.querySelectorAll('.selected');
                 selectedElements.forEach(element => element.classList.remove('selected'));
-                enseigneElement.classList.add('selected');
-                generateRightContent(enseigne, typeOfDataSheet)
+                hairdresserElement.classList.add('selected');
+                generateRightContent(hairdresser, typeOfDataSheet)
             }
         }
     )
-    clone.querySelector('.hairdresserName').textContent = enseigne.nom;
-    const numero = enseigne.num ?? '';  //vérifie si num existe, sinon met une chaine vide
-    clone.querySelector('.hairdresserStreet').textContent = numero + ' ' + enseigne.voie;
-    clone.querySelector('.hairdresserCity').textContent = enseigne.codepostal + ' ' + enseigne.ville;
+    clone.querySelector('.hairdresserName').textContent = hairdresser.nom;
+    const numero = hairdresser.num ?? '';  //vérifie si num existe, sinon met une chaine vide
+    clone.querySelector('.hairdresserStreet').textContent = numero + ' ' + hairdresser.voie;
+    clone.querySelector('.hairdresserCity').textContent = hairdresser.codepostal + ' ' + hairdresser.ville;
     clone.querySelector('.hairdresserIndex').textContent = index;
     hairdressersContainer.appendChild(clone);
 }
 
-function renderHairdressers(enseignes, startIndex, endIndex) {
+function renderHairdressers(hairdressers, startIndex, endIndex) {
     for (let i = startIndex; i < endIndex; i++) {
-        if (i < enseignes.length) {
-            renderHairdresser(enseignes[i], i + 1);
+        if (i < hairdressers.length) {
+            renderHairdresser(hairdressers[i], i + 1);
         }
     }
 }
 
-async function loadMoreHairdressers(enseignes) {
+async function loadMoreHairdressers(hairdressers) {
     let currentResp = await getHairdressers();
-    let enseignesToAdd = currentResp.enseignes;
-    enseignesToAdd.forEach(enseigne => enseignes.push(enseigne));
-    renderHairdressers(enseignes, indexPage, indexPage + 10);
-    indexPage = enseignes.length;
+    let hairdressersToAdd = currentResp.hairdressers;
+    hairdressersToAdd.forEach(hairdresser => hairdressers.push(hairdresser));
+    renderHairdressers(hairdressers, indexPage, indexPage + 10);
+    indexPage = hairdressers.length;
 }
 
 
@@ -356,7 +356,7 @@ async function init() {
 async function prepareTenFirstHairdressers() {
     indexPage = 0;
     resp = await getHairdressers();
-    hairdressers = resp.enseignes;
+    hairdressers = resp.hairdressers;
     numberOfHairdressers.textContent = resp.totalNumber.toString();
     renderHairdressers(hairdressers, indexPage, indexPage + 10);
     indexPage = hairdressers.length;
