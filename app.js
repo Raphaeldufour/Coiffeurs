@@ -19,8 +19,6 @@ function containsDigits(string) {
 }
 
 function okayForEdit(newInfos) {
-    console.log(newInfos);
-
     let isOkay = true;
     if (
         isNaN(newInfos[1]) || newInfos[1].includes(' ') || newInfos[1] === '' ||
@@ -42,10 +40,8 @@ function okayForEdit(newInfos) {
 
 app.get('/api/enseignes', (req, res) => {
     let filter = req.query.filter;
-    console.log("filtre courant= " + filter);
     if (req.query.index) {
         let response = {};
-        console.log(req.query.index);
         let offset = parseInt(req.query.index);
 
         db.all('SELECT * FROM enseignes WHERE nom LIKE ? or ville LIKE ? ORDER BY nom LIMIT 10 OFFSET ?', [`%${filter}%`, `%${filter}%`, offset], (err, enseignes) => {
@@ -183,5 +179,5 @@ function verifyToken(req, res, next) {
 }
 
 app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+    console.log('Server is running on http://localhost:3000');
 })

@@ -26,7 +26,6 @@ const loadMoreButton = document.getElementById('loadMoreButton');
 let indexPage = 0;
 let hairdressers = [];
 let filter = searchInput.value;
-console.log(filter);
 
 let currentInfos = [];
 
@@ -78,7 +77,6 @@ function editHtmlElement(newData, typeOfDataSheet) {
 
 async function sendModifiedData(data, typeOfDataSheet) {
     let method = '';
-    console.log(typeOfDataSheet);
     switch (typeOfDataSheet) {
         case 'edit':
             method = 'PUT';
@@ -87,13 +85,11 @@ async function sendModifiedData(data, typeOfDataSheet) {
             method = 'POST';
             break;
     }
-
     const response = await fetch('api/enseignes', {
         method: method,
         headers: {
             'Content-Type': 'application/json',
             'Authorization': localStorage.getItem('token'),
-            'id': localStorage.getItem('user_id')
         },
         body: JSON.stringify(data)
     })
@@ -135,16 +131,13 @@ function generateRightContent(enseigne, typeOfDataSheet) {
     currentInfos = [];
     let id = null;
     let inSwitching = getSwitchingState();
-
     if (enseigne !== null) {
         currentInfos = [enseigne.nom, enseigne.num, enseigne.voie, enseigne.codepostal, enseigne.ville, enseigne.lat, enseigne.lng];
         id = enseigne.id;
         updateMap(inSwitching, enseigne)
     }
-
     closeButton.classList.remove('disappearing', 'appearing');
     closeButton.classList.add(inSwitching ? 'stay' : 'appearing');
-
     closeButton.addEventListener('click', closeDataSheet);
 
     if (typeOfDataSheet === 'view') {
@@ -153,8 +146,6 @@ function generateRightContent(enseigne, typeOfDataSheet) {
         fillEditDataSheet(currentInfos, typeOfDataSheet);
         editButton.onclick = () => handleEditButtonClick(id, currentInfos, typeOfDataSheet, enseigne);
     }
-
-
     leftContentContainer.classList.add('givePlaceToRightContent');
     currentDataSheetContainer.classList.add('dataSheetOpened');
 }
@@ -209,7 +200,6 @@ function prepareDataForRequest(id, newInfos) {
 }
 
 function handleResponse(response, typeOfDataSheet, newInfos, enseigne) {
-    console.log(response);
     if (response.ok) {
         if (typeOfDataSheet === 'edit') {
             updateEnseigneInfos(enseigne, newInfos);
@@ -269,9 +259,7 @@ function renderHairdresser(enseigne, index) {
             } else {
                 typeOfDataSheet = 'edit';
             }
-
             if (enseigneElement.classList.contains('selected')) {
-                console.log('lelement courant est déjà sélectionné')
                 closeDataSheet();
                 enseigneElement.classList.remove('selected');
             } else {
@@ -280,17 +268,13 @@ function renderHairdresser(enseigne, index) {
                 enseigneElement.classList.add('selected');
                 generateRightContent(enseigne, typeOfDataSheet)
             }
-
-
         }
     )
-
     clone.querySelector('.hairdresserName').textContent = enseigne.nom;
     const numero = enseigne.num ?? '';  //vérifie si num existe, sinon met une chaine vide
     clone.querySelector('.hairdresserStreet').textContent = numero + ' ' + enseigne.voie;
     clone.querySelector('.hairdresserCity').textContent = enseigne.codepostal + ' ' + enseigne.ville;
     clone.querySelector('.hairdresserIndex').textContent = index;
-
     hairdressersContainer.appendChild(clone);
 }
 
@@ -306,12 +290,8 @@ async function loadMoreHairdressers(enseignes) {
     let currentResp = await getHairdressers();
     let enseignesToAdd = currentResp.enseignes;
     enseignesToAdd.forEach(enseigne => enseignes.push(enseigne));
-
-    console.log(enseignes);
-    console.log("enseignes.length" + enseignes.length)
     renderHairdressers(enseignes, indexPage, indexPage + 10);
     indexPage = enseignes.length;
-    console.log("indexPage :" + indexPage)
 }
 
 
@@ -321,7 +301,6 @@ function checkObserver() {
         rootMargin: '0px',
         threshold: 1
     };
-
     const observer = new IntersectionObserver(function (entries, observer) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -329,7 +308,6 @@ function checkObserver() {
             }
         });
     }, options);
-
     observer.observe(loadMoreButton);
 }
 
@@ -339,19 +317,6 @@ async function hairdressersFilter() {
     hairdressers = [];
     hairdressersContainer.innerHTML = '';
     await prepareTenFirstHairdressers();
-    /*
-    const searchValue = searchInput.value;
-    enseignes = enseignes.filter(enseigne => {
-        const nomLowerCase = enseigne.nom ? enseigne.nom.toLowerCase() : '';
-        const villeLowerCase = enseigne.ville ? enseigne.ville.toLowerCase() : '';
-        return nomLowerCase.includes(searchValue.toLowerCase())
-            || villeLowerCase.includes(searchValue.toLowerCase())
-    });
-    numberOfHairdressers.textContent = enseignes.length.toString();
-    hairdressersContainer.innerHTML = '';
-    indexPage = 10;
-    loadMoreHairdressers(enseignes);
-     */
 }
 
 
