@@ -3,7 +3,7 @@ const passwordContainer = document.getElementById("password-input");
 const loginButton = document.getElementById("login-submit");
 const cancelButton = document.getElementById("cancel-button");
 cancelButton.addEventListener("click", (click) => {
-    sessionStorage.setItem('isLoggedIn', 'false');
+    localStorage.setItem('isLoggedIn', 'false');
     click.preventDefault();
     window.location.href = "http://localhost:3000";
 });
